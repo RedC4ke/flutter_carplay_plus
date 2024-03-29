@@ -1,0 +1,6 @@
+{
+  "flutter": "beta",
+  "updateVscodeSettings": true,
+  "updateGitIgnore": true,
+  "runPubGetOnSdkChanges": true
+}

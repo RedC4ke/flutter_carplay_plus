@@ -1,0 +1,37 @@
+name: flutter_carplay_plus
+
+packages:
+  - flutter_carplay_plus
+
+scripts:
+  #!Setup
+  setup:
+    description: Setup the project
+    run: 
+      flutter pub get &&
+      melos bootstrap &&
+      brew install fastlane &&
+      dart pub global activate cider &&
+      dart pub global activate pigeon
+
+  #!Codegen
+  generate_pigeons:
+    description: Generate pigeon classes
+    run: dart run pigeon --input pigeons/core_pigeon.dart 
+
+  #!Version bump
+  bump_patch:
+    description: Bump patch version
+    run: 
+      fastlane run version_bump_podspec path:"ios/flutter_carplay_plus.podspec" &&
+      cider bump patch
+  bump_minor:
+    description: Bump minor version
+    run: 
+      fastlane run version_bump_podspec path:"ios/flutter_carplay_plus.podspec" bump_type:"minor" &&
+      cider bump minor
+  bump_major:
+    description: Bump major version
+    run: 
+      fastlane run version_bump_podspec path:"ios/flutter_carplay_plus.podspec" bump_type:"major" &&
+      cider bump major

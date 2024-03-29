@@ -1,0 +1,4 @@
+{
+  "dart.flutterSdkPath": ".fvm/versions/beta",
+  "dart.analyzerAdditionalArgs": ["--enable-experiment=macros"]
+}

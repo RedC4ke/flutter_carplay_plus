@@ -1,0 +1,44 @@
+name: flutter_carplay_plus
+description: "Flutter library to allow integration with Apple Carplay devices."
+version: 0.0.1
+
+#TODO (Redc4ke): Swap to stable once released
+environment:
+  sdk: '>=3.4.0-190.1.beta <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  macros: ^0.0.1
+  plugin_platform_interface: ^2.1.8
+  rxdart: ^0.27.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  very_good_analysis: ^5.1.0
+  build_runner: ^2.4.9
+  pigeon: ^17.3.0
+  melos: ^5.2.2
+  
+
+dependency_overrides:  
+  #TODO (Redc4ke): Remove when supported by dart analyzer
+  _fe_analyzer_shared: any
+  _macros: 
+    git:
+      url: https://github.com/dart-lang/sdk.git
+      path: pkg/_macros
+      ref: main
+  macros:
+    git:
+      url: https://github.com/dart-lang/sdk.git
+      path: pkg/macros
+      ref: main
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: FlutterCarplayPlusPlugin
