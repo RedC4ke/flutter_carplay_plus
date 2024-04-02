@@ -17,7 +17,9 @@ scripts:
   #!Codegen
   generate_pigeons:
     description: Generate pigeon classes
-    run: dart run pigeon --input pigeons/core_pigeon.dart 
+    run: 
+      dart run pigeon --input pigeons/core_pigeon.dart && 
+      dart run pigeon --input pigeons/template_pigeon.dart
 
   #!Version bump
   bump_patch:

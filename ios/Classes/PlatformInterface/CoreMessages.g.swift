@@ -30,17 +30,6 @@ enum CarplayConnectionStatus: Int {
   case disconnected = 2
   case unknown = 3
 }
-/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol CoreHostApi {
-}
-
-/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
-class CoreHostApiSetup {
-  /// The codec used by CoreHostApi.
-  /// Sets up an instance of `CoreHostApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: CoreHostApi?) {
-  }
-}
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol CoreFlutterApiProtocol {
   func onConnectionStatusChanged(status statusArg: CarplayConnectionStatus, completion: @escaping (Result<Void, FlutterError>) -> Void)

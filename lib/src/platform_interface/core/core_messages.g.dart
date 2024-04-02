@@ -25,18 +25,6 @@ enum CarplayConnectionStatus {
   unknown,
 }
 
-class CoreHostApi {
-  /// Constructor for [CoreHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
-  /// BinaryMessenger will be used which routes to the host platform.
-  CoreHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
-  final BinaryMessenger? __pigeon_binaryMessenger;
-
-  static const MessageCodec<Object?> pigeonChannelCodec = StandardMessageCodec();
-
-}
-
 abstract class CoreFlutterApi {
   static const MessageCodec<Object?> pigeonChannelCodec = StandardMessageCodec();
 
