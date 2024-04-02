@@ -35,12 +35,12 @@ abstract class TemplateFlutterApi {
   );
 }
 
-class FCPObjectData {
-  FCPObjectData({
-    required this.objectId,
+class FCPComponentData {
+  FCPComponentData({
+    required this.componentId,
   });
 
-  final String objectId;
+  final String componentId;
 }
 
 enum FCPImageSource {
@@ -70,11 +70,13 @@ class FCPTabData {
     this.tabTitle,
     this.tabImage,
     this.tabSystemImage,
+    this.showsTabBadge = false,
   });
 
   final String? tabTitle;
   final FCPImageData? tabImage;
   final FCPSystemImageData? tabSystemImage;
+  final bool showsTabBadge;
 }
 
 enum FCPTemplateType {
@@ -97,22 +99,21 @@ class WrappedTemplateData {
 
 //! Templates
 
-class FCPFullscreenTemplateData {
-  FCPFullscreenTemplateData({
-    required this.objectData,
-    required this.tabData,
-  });
-
-  final FCPObjectData objectData;
-  final FCPTabData? tabData;
+enum FCPTemplateCategory {
+  fullscreen,
+  modal,
 }
 
-class FCPModalTemplateData {
-  FCPModalTemplateData({
+class FCPTemplateData {
+  FCPTemplateData({
     required this.objectData,
+    required this.category,
+    this.tabData,
   });
 
-  final FCPObjectData objectData;
+  final FCPComponentData objectData;
+  final FCPTabData? tabData;
+  final FCPTemplateCategory category;
 }
 
 class FCPTabBarTemplateData {
@@ -121,7 +122,7 @@ class FCPTabBarTemplateData {
     required this.templates,
   });
 
-  final FCPFullscreenTemplateData templateData;
+  final FCPTemplateData templateData;
   final List<WrappedTemplateData?> templates;
 }
 
@@ -131,7 +132,7 @@ class FCPListTemplateData {
     this.barButtonProvidingData,
   });
 
-  final FCPFullscreenTemplateData templateData;
+  final FCPTemplateData templateData;
   final FCPBarButtonProvidingData? barButtonProvidingData;
 }
 
@@ -156,7 +157,7 @@ class FCPBarButtonData {
     this.title,
   });
 
-  final FCPObjectData objectData;
+  final FCPComponentData objectData;
   final FCPImageData? image;
   final String? title;
 }

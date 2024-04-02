@@ -35,23 +35,28 @@ enum FCPTemplateType {
   tabBar,
 }
 
-class FCPObjectData {
-  FCPObjectData({
-    required this.objectId,
+enum FCPTemplateCategory {
+  fullscreen,
+  modal,
+}
+
+class FCPComponentData {
+  FCPComponentData({
+    required this.componentId,
   });
 
-  String objectId;
+  String componentId;
 
   Object encode() {
     return <Object?>[
-      objectId,
+      componentId,
     ];
   }
 
-  static FCPObjectData decode(Object result) {
+  static FCPComponentData decode(Object result) {
     result as List<Object?>;
-    return FCPObjectData(
-      objectId: result[0]! as String,
+    return FCPComponentData(
+      componentId: result[0]! as String,
     );
   }
 }
@@ -108,6 +113,7 @@ class FCPTabData {
     this.tabTitle,
     this.tabImage,
     this.tabSystemImage,
+    this.showsTabBadge = false,
   });
 
   String? tabTitle;
@@ -116,11 +122,14 @@ class FCPTabData {
 
   FCPSystemImageData? tabSystemImage;
 
+  bool showsTabBadge;
+
   Object encode() {
     return <Object?>[
       tabTitle,
       tabImage?.encode(),
       tabSystemImage?.encode(),
+      showsTabBadge,
     ];
   }
 
@@ -134,6 +143,7 @@ class FCPTabData {
       tabSystemImage: result[2] != null
           ? FCPSystemImageData.decode(result[2]! as List<Object?>)
           : null,
+      showsTabBadge: result[3]! as bool,
     );
   }
 }
@@ -173,30 +183,35 @@ class WrappedTemplateData {
   }
 }
 
-class FCPFullscreenTemplateData {
-  FCPFullscreenTemplateData({
+class FCPTemplateData {
+  FCPTemplateData({
     required this.objectData,
     this.tabData,
+    required this.category,
   });
 
-  FCPObjectData objectData;
+  FCPComponentData objectData;
 
   FCPTabData? tabData;
+
+  FCPTemplateCategory category;
 
   Object encode() {
     return <Object?>[
       objectData.encode(),
       tabData?.encode(),
+      category.index,
     ];
   }
 
-  static FCPFullscreenTemplateData decode(Object result) {
+  static FCPTemplateData decode(Object result) {
     result as List<Object?>;
-    return FCPFullscreenTemplateData(
-      objectData: FCPObjectData.decode(result[0]! as List<Object?>),
+    return FCPTemplateData(
+      objectData: FCPComponentData.decode(result[0]! as List<Object?>),
       tabData: result[1] != null
           ? FCPTabData.decode(result[1]! as List<Object?>)
           : null,
+      category: FCPTemplateCategory.values[result[2]! as int],
     );
   }
 }
@@ -207,7 +222,7 @@ class FCPTabBarTemplateData {
     required this.templates,
   });
 
-  FCPFullscreenTemplateData templateData;
+  FCPTemplateData templateData;
 
   List<WrappedTemplateData?> templates;
 
@@ -221,7 +236,7 @@ class FCPTabBarTemplateData {
   static FCPTabBarTemplateData decode(Object result) {
     result as List<Object?>;
     return FCPTabBarTemplateData(
-      templateData: FCPFullscreenTemplateData.decode(result[0]! as List<Object?>),
+      templateData: FCPTemplateData.decode(result[0]! as List<Object?>),
       templates: (result[1] as List<Object?>?)!.cast<WrappedTemplateData?>(),
     );
   }
@@ -233,7 +248,7 @@ class FCPListTemplateData {
     this.barButtonProvidingData,
   });
 
-  FCPFullscreenTemplateData templateData;
+  FCPTemplateData templateData;
 
   FCPBarButtonProvidingData? barButtonProvidingData;
 
@@ -247,7 +262,7 @@ class FCPListTemplateData {
   static FCPListTemplateData decode(Object result) {
     result as List<Object?>;
     return FCPListTemplateData(
-      templateData: FCPFullscreenTemplateData.decode(result[0]! as List<Object?>),
+      templateData: FCPTemplateData.decode(result[0]! as List<Object?>),
       barButtonProvidingData: result[1] != null
           ? FCPBarButtonProvidingData.decode(result[1]! as List<Object?>)
           : null,
@@ -295,7 +310,7 @@ class FCPBarButtonData {
     this.title,
   });
 
-  FCPObjectData objectData;
+  FCPComponentData objectData;
 
   FCPImageData? image;
 
@@ -312,7 +327,7 @@ class FCPBarButtonData {
   static FCPBarButtonData decode(Object result) {
     result as List<Object?>;
     return FCPBarButtonData(
-      objectData: FCPObjectData.decode(result[0]! as List<Object?>),
+      objectData: FCPComponentData.decode(result[0]! as List<Object?>),
       image: result[1] != null
           ? FCPImageData.decode(result[1]! as List<Object?>)
           : null,
@@ -334,7 +349,7 @@ class _TemplateHostApiCodec extends StandardMessageCodec {
     } else if (value is FCPBarButtonProvidingData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is FCPFullscreenTemplateData) {
+    } else if (value is FCPComponentData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else if (value is FCPImageData) {
@@ -343,16 +358,16 @@ class _TemplateHostApiCodec extends StandardMessageCodec {
     } else if (value is FCPListTemplateData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is FCPObjectData) {
+    } else if (value is FCPSystemImageData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is FCPSystemImageData) {
+    } else if (value is FCPTabBarTemplateData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTabBarTemplateData) {
+    } else if (value is FCPTabData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTabData) {
+    } else if (value is FCPTemplateData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else if (value is WrappedTemplateData) {
@@ -376,19 +391,19 @@ class _TemplateHostApiCodec extends StandardMessageCodec {
       case 130: 
         return FCPBarButtonProvidingData.decode(readValue(buffer)!);
       case 131: 
-        return FCPFullscreenTemplateData.decode(readValue(buffer)!);
+        return FCPComponentData.decode(readValue(buffer)!);
       case 132: 
         return FCPImageData.decode(readValue(buffer)!);
       case 133: 
         return FCPListTemplateData.decode(readValue(buffer)!);
       case 134: 
-        return FCPObjectData.decode(readValue(buffer)!);
-      case 135: 
         return FCPSystemImageData.decode(readValue(buffer)!);
-      case 136: 
+      case 135: 
         return FCPTabBarTemplateData.decode(readValue(buffer)!);
-      case 137: 
+      case 136: 
         return FCPTabData.decode(readValue(buffer)!);
+      case 137: 
+        return FCPTemplateData.decode(readValue(buffer)!);
       case 138: 
         return WrappedTemplateData.decode(readValue(buffer)!);
       case 139: 

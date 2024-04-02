@@ -1,19 +1,29 @@
 import 'package:flutter_carplay_plus/src/platform_interface/template/template_messages.g.dart';
-import 'package:uuid/v4.dart';
+import 'package:flutter_carplay_plus/ui/models/fcp_interactive_component.dart';
 
 /// A superclass for all templates.
-abstract base class FCPTemplate {
+abstract base class FCPTemplate extends FCPInteractiveComponent {
   /// Generated data model for [TemplateHostApi]
-  abstract final dynamic templateData;
+  abstract final WrappedTemplateData templateData;
 
-  final UuidV4 _uuid = const UuidV4();
+  /// The category of the template.
+  abstract final FCPTemplateCategory templateCategory;
 }
 
-/// An interface for templates that can be used as root.
-abstract interface class FCPRootTemplate {}
+/// A superclass for templates that are presented fullscreen.
+abstract base class FCPFullscreenTemplate extends FCPTemplate {
+  @override
+  final templateCategory = FCPTemplateCategory.fullscreen;
+}
 
-/// A superclass for templates that can be pushed.
-abstract base class FCPNavigableTemplate implements FCPTemplate {}
+/// A superclass for templates that are presented modally.
+abstract base class FCPModalTemplate extends FCPTemplate {
+  @override
+  final templateCategory = FCPTemplateCategory.modal;
+}
 
-/// A superclass for templates that can be presented modally.
-abstract base class FCPModalTemplate implements FCPTemplate {}
+/// A mixin for templates that can be used as root.
+base mixin FCPRootTemplate on FCPTemplate {}
+
+/// A mixin for templates that can be pushed.
+base mixin FCPPushableTemplate on FCPTemplate {}

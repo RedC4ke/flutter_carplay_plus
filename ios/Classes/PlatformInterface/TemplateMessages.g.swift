@@ -53,20 +53,25 @@ enum FCPTemplateType: Int {
   case tabBar = 2
 }
 
+enum FCPTemplateCategory: Int {
+  case fullscreen = 0
+  case modal = 1
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
-struct FCPObjectData {
-  var objectId: String
+struct FCPComponentData {
+  var componentId: String
 
-  static func fromList(_ list: [Any?]) -> FCPObjectData? {
-    let objectId = list[0] as! String
+  static func fromList(_ list: [Any?]) -> FCPComponentData? {
+    let componentId = list[0] as! String
 
-    return FCPObjectData(
-      objectId: objectId
+    return FCPComponentData(
+      componentId: componentId
     )
   }
   func toList() -> [Any?] {
     return [
-      objectId
+      componentId
     ]
   }
 }
@@ -116,6 +121,7 @@ struct FCPTabData {
   var tabTitle: String? = nil
   var tabImage: FCPImageData? = nil
   var tabSystemImage: FCPSystemImageData? = nil
+  var showsTabBadge: Bool
 
   static func fromList(_ list: [Any?]) -> FCPTabData? {
     let tabTitle: String? = nilOrValue(list[0])
@@ -127,11 +133,13 @@ struct FCPTabData {
     if let tabSystemImageList: [Any?] = nilOrValue(list[2]) {
       tabSystemImage = FCPSystemImageData.fromList(tabSystemImageList)
     }
+    let showsTabBadge = list[3] as! Bool
 
     return FCPTabData(
       tabTitle: tabTitle,
       tabImage: tabImage,
-      tabSystemImage: tabSystemImage
+      tabSystemImage: tabSystemImage,
+      showsTabBadge: showsTabBadge
     )
   }
   func toList() -> [Any?] {
@@ -139,6 +147,7 @@ struct FCPTabData {
       tabTitle,
       tabImage?.toList(),
       tabSystemImage?.toList(),
+      showsTabBadge,
     ]
   }
 }
@@ -176,37 +185,41 @@ struct WrappedTemplateData {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct FCPFullscreenTemplateData {
-  var objectData: FCPObjectData
+struct FCPTemplateData {
+  var objectData: FCPComponentData
   var tabData: FCPTabData? = nil
+  var category: FCPTemplateCategory
 
-  static func fromList(_ list: [Any?]) -> FCPFullscreenTemplateData? {
-    let objectData = FCPObjectData.fromList(list[0] as! [Any?])!
+  static func fromList(_ list: [Any?]) -> FCPTemplateData? {
+    let objectData = FCPComponentData.fromList(list[0] as! [Any?])!
     var tabData: FCPTabData? = nil
     if let tabDataList: [Any?] = nilOrValue(list[1]) {
       tabData = FCPTabData.fromList(tabDataList)
     }
+    let category = FCPTemplateCategory(rawValue: list[2] as! Int)!
 
-    return FCPFullscreenTemplateData(
+    return FCPTemplateData(
       objectData: objectData,
-      tabData: tabData
+      tabData: tabData,
+      category: category
     )
   }
   func toList() -> [Any?] {
     return [
       objectData.toList(),
       tabData?.toList(),
+      category.rawValue,
     ]
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPTabBarTemplateData {
-  var templateData: FCPFullscreenTemplateData
+  var templateData: FCPTemplateData
   var templates: [WrappedTemplateData?]
 
   static func fromList(_ list: [Any?]) -> FCPTabBarTemplateData? {
-    let templateData = FCPFullscreenTemplateData.fromList(list[0] as! [Any?])!
+    let templateData = FCPTemplateData.fromList(list[0] as! [Any?])!
     let templates = list[1] as! [WrappedTemplateData?]
 
     return FCPTabBarTemplateData(
@@ -224,11 +237,11 @@ struct FCPTabBarTemplateData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPListTemplateData {
-  var templateData: FCPFullscreenTemplateData
+  var templateData: FCPTemplateData
   var barButtonProvidingData: FCPBarButtonProvidingData? = nil
 
   static func fromList(_ list: [Any?]) -> FCPListTemplateData? {
-    let templateData = FCPFullscreenTemplateData.fromList(list[0] as! [Any?])!
+    let templateData = FCPTemplateData.fromList(list[0] as! [Any?])!
     var barButtonProvidingData: FCPBarButtonProvidingData? = nil
     if let barButtonProvidingDataList: [Any?] = nilOrValue(list[1]) {
       barButtonProvidingData = FCPBarButtonProvidingData.fromList(barButtonProvidingDataList)
@@ -278,12 +291,12 @@ struct FCPBarButtonProvidingData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPBarButtonData {
-  var objectData: FCPObjectData
+  var objectData: FCPComponentData
   var image: FCPImageData? = nil
   var title: String? = nil
 
   static func fromList(_ list: [Any?]) -> FCPBarButtonData? {
-    let objectData = FCPObjectData.fromList(list[0] as! [Any?])!
+    let objectData = FCPComponentData.fromList(list[0] as! [Any?])!
     var image: FCPImageData? = nil
     if let imageList: [Any?] = nilOrValue(list[1]) {
       image = FCPImageData.fromList(imageList)
@@ -314,19 +327,19 @@ private class TemplateHostApiCodecReader: FlutterStandardReader {
     case 130:
       return FCPBarButtonProvidingData.fromList(self.readValue() as! [Any?])
     case 131:
-      return FCPFullscreenTemplateData.fromList(self.readValue() as! [Any?])
+      return FCPComponentData.fromList(self.readValue() as! [Any?])
     case 132:
       return FCPImageData.fromList(self.readValue() as! [Any?])
     case 133:
       return FCPListTemplateData.fromList(self.readValue() as! [Any?])
     case 134:
-      return FCPObjectData.fromList(self.readValue() as! [Any?])
-    case 135:
       return FCPSystemImageData.fromList(self.readValue() as! [Any?])
-    case 136:
+    case 135:
       return FCPTabBarTemplateData.fromList(self.readValue() as! [Any?])
-    case 137:
+    case 136:
       return FCPTabData.fromList(self.readValue() as! [Any?])
+    case 137:
+      return FCPTemplateData.fromList(self.readValue() as! [Any?])
     case 138:
       return WrappedTemplateData.fromList(self.readValue() as! [Any?])
     case 139:
@@ -348,7 +361,7 @@ private class TemplateHostApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? FCPBarButtonProvidingData {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPFullscreenTemplateData {
+    } else if let value = value as? FCPComponentData {
       super.writeByte(131)
       super.writeValue(value.toList())
     } else if let value = value as? FCPImageData {
@@ -357,16 +370,16 @@ private class TemplateHostApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? FCPListTemplateData {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPObjectData {
+    } else if let value = value as? FCPSystemImageData {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPSystemImageData {
+    } else if let value = value as? FCPTabBarTemplateData {
       super.writeByte(135)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTabBarTemplateData {
+    } else if let value = value as? FCPTabData {
       super.writeByte(136)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTabData {
+    } else if let value = value as? FCPTemplateData {
       super.writeByte(137)
       super.writeValue(value.toList())
     } else if let value = value as? WrappedTemplateData {

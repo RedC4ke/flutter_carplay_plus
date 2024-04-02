@@ -1,3 +1,5 @@
+import 'package:flutter_carplay_plus/ui/models/other/fcp_clickable_component.dart';
+
 /// The style to use when displaying a bar button.
 enum FCPBarButtonStyles {
   /// No styling is applied.
@@ -8,12 +10,12 @@ enum FCPBarButtonStyles {
 }
 
 /// A button that appears in the navigation bar.
-class FCPBarButton {
+class FCPBarButton extends FCPClickableComponent {
   /// Creates a new instance of [FCPBarButton].
   FCPBarButton({
     required this.title,
-    required this.onPress,
     this.style = FCPBarButtonStyles.rounded,
+    super.onPress,
   });
 
   /// The title displayed on the bar button.
@@ -22,7 +24,4 @@ class FCPBarButton {
   /// The style to use when displaying the button.
   /// Default is [FCPBarButtonStyles.rounded]
   final FCPBarButtonStyles style;
-
-  /// Fired when the user taps the button.
-  final void Function() onPress;
 }
