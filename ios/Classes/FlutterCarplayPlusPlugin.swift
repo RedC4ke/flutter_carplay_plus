@@ -1,19 +1,18 @@
 import Flutter
 import UIKit
 
-public class FlutterCarplayPlusPlugin: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "flutter_carplay_plus", binaryMessenger: registrar.messenger())
-    let instance = FlutterCarplayPlusPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "getPlatformVersion":
-      result("iOS " + UIDevice.current.systemVersion)
-    default:
-      result(FlutterMethodNotImplemented)
+public class FlutterCarplayPlusPlugin: NSObject, FlutterPlugin, FlutterApplicationLifeCycleDelegate {
+    public static var instance: FlutterCarplayPlusPlugin?
+    var messenger: FlutterBinaryMessenger
+    var coreFlutterApi: CoreFlutterApi
+    
+    init(registrar: FlutterPluginRegistrar) {
+        self.messenger = registrar.messenger()
+        
+        self.coreFlutterApi = CoreFlutterApi(binaryMessenger: messenger)
     }
-  }
+    
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        instance = FlutterCarplayPlusPlugin(registrar: registrar)
+    }
 }
