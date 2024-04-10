@@ -5,6 +5,11 @@ import 'package:rxdart/subjects.dart';
 /// Receives messages from the platform side and sends them to the appropriate
 /// listeners.
 class CoreFlutterClient implements CoreFlutterApi {
+  /// Creates a new [CoreFlutterClient].
+  CoreFlutterClient() {
+    CoreFlutterApi.setup(this);
+  }
+
   final BehaviorSubject<CarplayConnectionStatus> _connectionStatusSubject =
       BehaviorSubject<CarplayConnectionStatus>.seeded(
     CarplayConnectionStatus.unknown,

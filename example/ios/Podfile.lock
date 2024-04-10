@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_carplay_plus: e640f1f981483a04244e5aa53f82215746316bb8
+  flutter_carplay_plus: 8c3717f80548b3c3f676bc666be6047134a03c93
   integration_test: ce0a3ffa1de96d1a89ca0ac26fca7ea18a749ef4
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796

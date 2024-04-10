@@ -14,5 +14,7 @@ public class FlutterCarplayPlusPlugin: NSObject, FlutterPlugin, FlutterApplicati
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         instance = FlutterCarplayPlusPlugin(registrar: registrar)
+        
+        registrar.addApplicationDelegate(instance!)
     }
 }
