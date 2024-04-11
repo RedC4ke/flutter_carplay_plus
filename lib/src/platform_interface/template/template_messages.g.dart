@@ -185,12 +185,12 @@ class WrappedTemplateData {
 
 class FCPTemplateData {
   FCPTemplateData({
-    required this.objectData,
+    required this.componentData,
     this.tabData,
     required this.category,
   });
 
-  FCPComponentData objectData;
+  FCPComponentData componentData;
 
   FCPTabData? tabData;
 
@@ -198,7 +198,7 @@ class FCPTemplateData {
 
   Object encode() {
     return <Object?>[
-      objectData.encode(),
+      componentData.encode(),
       tabData?.encode(),
       category.index,
     ];
@@ -207,7 +207,7 @@ class FCPTemplateData {
   static FCPTemplateData decode(Object result) {
     result as List<Object?>;
     return FCPTemplateData(
-      objectData: FCPComponentData.decode(result[0]! as List<Object?>),
+      componentData: FCPComponentData.decode(result[0]! as List<Object?>),
       tabData: result[1] != null
           ? FCPTabData.decode(result[1]! as List<Object?>)
           : null,
@@ -218,17 +218,17 @@ class FCPTemplateData {
 
 class FCPTabBarTemplateData {
   FCPTabBarTemplateData({
-    required this.templateData,
+    required this.data,
     required this.templates,
   });
 
-  FCPTemplateData templateData;
+  FCPTemplateData data;
 
   List<WrappedTemplateData?> templates;
 
   Object encode() {
     return <Object?>[
-      templateData.encode(),
+      data.encode(),
       templates,
     ];
   }
@@ -236,7 +236,7 @@ class FCPTabBarTemplateData {
   static FCPTabBarTemplateData decode(Object result) {
     result as List<Object?>;
     return FCPTabBarTemplateData(
-      templateData: FCPTemplateData.decode(result[0]! as List<Object?>),
+      data: FCPTemplateData.decode(result[0]! as List<Object?>),
       templates: (result[1] as List<Object?>?)!.cast<WrappedTemplateData?>(),
     );
   }
@@ -244,17 +244,17 @@ class FCPTabBarTemplateData {
 
 class FCPListTemplateData {
   FCPListTemplateData({
-    required this.templateData,
+    required this.data,
     this.barButtonProvidingData,
   });
 
-  FCPTemplateData templateData;
+  FCPTemplateData data;
 
   FCPBarButtonProvidingData? barButtonProvidingData;
 
   Object encode() {
     return <Object?>[
-      templateData.encode(),
+      data.encode(),
       barButtonProvidingData?.encode(),
     ];
   }
@@ -262,7 +262,7 @@ class FCPListTemplateData {
   static FCPListTemplateData decode(Object result) {
     result as List<Object?>;
     return FCPListTemplateData(
-      templateData: FCPTemplateData.decode(result[0]! as List<Object?>),
+      data: FCPTemplateData.decode(result[0]! as List<Object?>),
       barButtonProvidingData: result[1] != null
           ? FCPBarButtonProvidingData.decode(result[1]! as List<Object?>)
           : null,
@@ -305,12 +305,12 @@ class FCPBarButtonProvidingData {
 
 class FCPBarButtonData {
   FCPBarButtonData({
-    required this.objectData,
+    required this.componentData,
     this.image,
     this.title,
   });
 
-  FCPComponentData objectData;
+  FCPComponentData componentData;
 
   FCPImageData? image;
 
@@ -318,7 +318,7 @@ class FCPBarButtonData {
 
   Object encode() {
     return <Object?>[
-      objectData.encode(),
+      componentData.encode(),
       image?.encode(),
       title,
     ];
@@ -327,7 +327,7 @@ class FCPBarButtonData {
   static FCPBarButtonData decode(Object result) {
     result as List<Object?>;
     return FCPBarButtonData(
-      objectData: FCPComponentData.decode(result[0]! as List<Object?>),
+      componentData: FCPComponentData.decode(result[0]! as List<Object?>),
       image: result[1] != null
           ? FCPImageData.decode(result[1]! as List<Object?>)
           : null,

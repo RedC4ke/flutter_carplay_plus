@@ -106,33 +106,33 @@ enum FCPTemplateCategory {
 
 class FCPTemplateData {
   FCPTemplateData({
-    required this.objectData,
+    required this.componentData,
     required this.category,
     this.tabData,
   });
 
-  final FCPComponentData objectData;
+  final FCPComponentData componentData;
   final FCPTabData? tabData;
   final FCPTemplateCategory category;
 }
 
 class FCPTabBarTemplateData {
   FCPTabBarTemplateData({
-    required this.templateData,
+    required this.data,
     required this.templates,
   });
 
-  final FCPTemplateData templateData;
+  final FCPTemplateData data;
   final List<WrappedTemplateData?> templates;
 }
 
 class FCPListTemplateData {
   FCPListTemplateData({
-    required this.templateData,
+    required this.data,
     this.barButtonProvidingData,
   });
 
-  final FCPTemplateData templateData;
+  final FCPTemplateData data;
   final FCPBarButtonProvidingData? barButtonProvidingData;
 }
 
@@ -152,12 +152,12 @@ class FCPBarButtonProvidingData {
 
 class FCPBarButtonData {
   FCPBarButtonData({
-    required this.objectData,
+    required this.componentData,
     this.image,
     this.title,
   });
 
-  final FCPComponentData objectData;
+  final FCPComponentData componentData;
   final FCPImageData? image;
   final String? title;
 }

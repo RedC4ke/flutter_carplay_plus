@@ -186,12 +186,12 @@ struct WrappedTemplateData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPTemplateData {
-  var objectData: FCPComponentData
+  var componentData: FCPComponentData
   var tabData: FCPTabData? = nil
   var category: FCPTemplateCategory
 
   static func fromList(_ list: [Any?]) -> FCPTemplateData? {
-    let objectData = FCPComponentData.fromList(list[0] as! [Any?])!
+    let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
     var tabData: FCPTabData? = nil
     if let tabDataList: [Any?] = nilOrValue(list[1]) {
       tabData = FCPTabData.fromList(tabDataList)
@@ -199,14 +199,14 @@ struct FCPTemplateData {
     let category = FCPTemplateCategory(rawValue: list[2] as! Int)!
 
     return FCPTemplateData(
-      objectData: objectData,
+      componentData: componentData,
       tabData: tabData,
       category: category
     )
   }
   func toList() -> [Any?] {
     return [
-      objectData.toList(),
+      componentData.toList(),
       tabData?.toList(),
       category.rawValue,
     ]
@@ -215,21 +215,21 @@ struct FCPTemplateData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPTabBarTemplateData {
-  var templateData: FCPTemplateData
+  var data: FCPTemplateData
   var templates: [WrappedTemplateData?]
 
   static func fromList(_ list: [Any?]) -> FCPTabBarTemplateData? {
-    let templateData = FCPTemplateData.fromList(list[0] as! [Any?])!
+    let data = FCPTemplateData.fromList(list[0] as! [Any?])!
     let templates = list[1] as! [WrappedTemplateData?]
 
     return FCPTabBarTemplateData(
-      templateData: templateData,
+      data: data,
       templates: templates
     )
   }
   func toList() -> [Any?] {
     return [
-      templateData.toList(),
+      data.toList(),
       templates,
     ]
   }
@@ -237,24 +237,24 @@ struct FCPTabBarTemplateData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPListTemplateData {
-  var templateData: FCPTemplateData
+  var data: FCPTemplateData
   var barButtonProvidingData: FCPBarButtonProvidingData? = nil
 
   static func fromList(_ list: [Any?]) -> FCPListTemplateData? {
-    let templateData = FCPTemplateData.fromList(list[0] as! [Any?])!
+    let data = FCPTemplateData.fromList(list[0] as! [Any?])!
     var barButtonProvidingData: FCPBarButtonProvidingData? = nil
     if let barButtonProvidingDataList: [Any?] = nilOrValue(list[1]) {
       barButtonProvidingData = FCPBarButtonProvidingData.fromList(barButtonProvidingDataList)
     }
 
     return FCPListTemplateData(
-      templateData: templateData,
+      data: data,
       barButtonProvidingData: barButtonProvidingData
     )
   }
   func toList() -> [Any?] {
     return [
-      templateData.toList(),
+      data.toList(),
       barButtonProvidingData?.toList(),
     ]
   }
@@ -291,12 +291,12 @@ struct FCPBarButtonProvidingData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPBarButtonData {
-  var objectData: FCPComponentData
+  var componentData: FCPComponentData
   var image: FCPImageData? = nil
   var title: String? = nil
 
   static func fromList(_ list: [Any?]) -> FCPBarButtonData? {
-    let objectData = FCPComponentData.fromList(list[0] as! [Any?])!
+    let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
     var image: FCPImageData? = nil
     if let imageList: [Any?] = nilOrValue(list[1]) {
       image = FCPImageData.fromList(imageList)
@@ -304,14 +304,14 @@ struct FCPBarButtonData {
     let title: String? = nilOrValue(list[2])
 
     return FCPBarButtonData(
-      objectData: objectData,
+      componentData: componentData,
       image: image,
       title: title
     )
   }
   func toList() -> [Any?] {
     return [
-      objectData.toList(),
+      componentData.toList(),
       image?.toList(),
       title,
     ]
