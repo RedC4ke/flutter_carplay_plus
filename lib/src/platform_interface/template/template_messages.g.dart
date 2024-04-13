@@ -40,6 +40,44 @@ enum FCPTemplateCategory {
   modal,
 }
 
+enum FCPListTemplateItemType {
+  listItem,
+  imageRowListItem,
+  messageListItem,
+}
+
+enum FCPListItemAccessoryType {
+  none,
+  disclosureIndicator,
+  detailButton,
+}
+
+enum FCPListItemPlayingIndicatorLocation {
+  leading,
+  trailing,
+}
+
+enum FCPMessageLeadingItem {
+  none,
+  pin,
+  star,
+}
+
+enum FCPMessageTrailingItem {
+  none,
+  mute,
+}
+
+enum FCPBarButtonStyle {
+  none,
+  rounded,
+}
+
+enum FCPBarButtonType {
+  text,
+  image,
+}
+
 class FCPComponentData {
   FCPComponentData({
     required this.componentId,
@@ -87,32 +125,10 @@ class FCPImageData {
   }
 }
 
-class FCPSystemImageData {
-  FCPSystemImageData({
-    required this.symbolIdentifier,
-  });
-
-  String symbolIdentifier;
-
-  Object encode() {
-    return <Object?>[
-      symbolIdentifier,
-    ];
-  }
-
-  static FCPSystemImageData decode(Object result) {
-    result as List<Object?>;
-    return FCPSystemImageData(
-      symbolIdentifier: result[0]! as String,
-    );
-  }
-}
-
 class FCPTabData {
   FCPTabData({
     this.tabTitle,
     this.tabImage,
-    this.tabSystemImage,
     this.showsTabBadge = false,
   });
 
@@ -120,15 +136,12 @@ class FCPTabData {
 
   FCPImageData? tabImage;
 
-  FCPSystemImageData? tabSystemImage;
-
   bool showsTabBadge;
 
   Object encode() {
     return <Object?>[
       tabTitle,
       tabImage?.encode(),
-      tabSystemImage?.encode(),
       showsTabBadge,
     ];
   }
@@ -140,10 +153,7 @@ class FCPTabData {
       tabImage: result[1] != null
           ? FCPImageData.decode(result[1]! as List<Object?>)
           : null,
-      tabSystemImage: result[2] != null
-          ? FCPSystemImageData.decode(result[2]! as List<Object?>)
-          : null,
-      showsTabBadge: result[3]! as bool,
+      showsTabBadge: result[2]! as bool,
     );
   }
 }
@@ -151,11 +161,14 @@ class FCPTabData {
 class WrappedTemplateData {
   WrappedTemplateData({
     required this.type,
+    required this.data,
     this.listTemplateData,
     this.tabBarTemplateData,
   });
 
   FCPTemplateType type;
+
+  FCPTemplateData data;
 
   FCPListTemplateData? listTemplateData;
 
@@ -164,6 +177,7 @@ class WrappedTemplateData {
   Object encode() {
     return <Object?>[
       type.index,
+      data.encode(),
       listTemplateData?.encode(),
       tabBarTemplateData?.encode(),
     ];
@@ -173,11 +187,12 @@ class WrappedTemplateData {
     result as List<Object?>;
     return WrappedTemplateData(
       type: FCPTemplateType.values[result[0]! as int],
-      listTemplateData: result[1] != null
-          ? FCPListTemplateData.decode(result[1]! as List<Object?>)
+      data: FCPTemplateData.decode(result[1]! as List<Object?>),
+      listTemplateData: result[2] != null
+          ? FCPListTemplateData.decode(result[2]! as List<Object?>)
           : null,
-      tabBarTemplateData: result[2] != null
-          ? FCPTabBarTemplateData.decode(result[2]! as List<Object?>)
+      tabBarTemplateData: result[3] != null
+          ? FCPTabBarTemplateData.decode(result[3]! as List<Object?>)
           : null,
     );
   }
@@ -218,17 +233,13 @@ class FCPTemplateData {
 
 class FCPTabBarTemplateData {
   FCPTabBarTemplateData({
-    required this.data,
     required this.templates,
   });
-
-  FCPTemplateData data;
 
   List<WrappedTemplateData?> templates;
 
   Object encode() {
     return <Object?>[
-      data.encode(),
       templates,
     ];
   }
@@ -236,35 +247,355 @@ class FCPTabBarTemplateData {
   static FCPTabBarTemplateData decode(Object result) {
     result as List<Object?>;
     return FCPTabBarTemplateData(
-      data: FCPTemplateData.decode(result[0]! as List<Object?>),
-      templates: (result[1] as List<Object?>?)!.cast<WrappedTemplateData?>(),
+      templates: (result[0] as List<Object?>?)!.cast<WrappedTemplateData?>(),
     );
   }
 }
 
 class FCPListTemplateData {
   FCPListTemplateData({
-    required this.data,
     this.barButtonProvidingData,
+    required this.sections,
+    this.emptyViewTitleVariants = const [],
+    this.emptyViewSubtitleVariants = const [],
+    this.title,
   });
-
-  FCPTemplateData data;
 
   FCPBarButtonProvidingData? barButtonProvidingData;
 
+  List<FCPListSectionData?> sections;
+
+  List<String?> emptyViewTitleVariants;
+
+  List<String?> emptyViewSubtitleVariants;
+
+  String? title;
+
   Object encode() {
     return <Object?>[
-      data.encode(),
       barButtonProvidingData?.encode(),
+      sections,
+      emptyViewTitleVariants,
+      emptyViewSubtitleVariants,
+      title,
     ];
   }
 
   static FCPListTemplateData decode(Object result) {
     result as List<Object?>;
     return FCPListTemplateData(
-      data: FCPTemplateData.decode(result[0]! as List<Object?>),
-      barButtonProvidingData: result[1] != null
-          ? FCPBarButtonProvidingData.decode(result[1]! as List<Object?>)
+      barButtonProvidingData: result[0] != null
+          ? FCPBarButtonProvidingData.decode(result[0]! as List<Object?>)
+          : null,
+      sections: (result[1] as List<Object?>?)!.cast<FCPListSectionData?>(),
+      emptyViewTitleVariants: (result[2] as List<Object?>?)!.cast<String?>(),
+      emptyViewSubtitleVariants: (result[3] as List<Object?>?)!.cast<String?>(),
+      title: result[4] as String?,
+    );
+  }
+}
+
+class FCPListSectionData {
+  FCPListSectionData({
+    this.header,
+    this.sectionIndexTitle,
+    required this.items,
+    this.headerButton,
+    this.headerImage,
+    this.headerSubtitle,
+  });
+
+  String? header;
+
+  String? sectionIndexTitle;
+
+  List<WrappedListItemData?> items;
+
+  FCPButtonData? headerButton;
+
+  FCPImageData? headerImage;
+
+  String? headerSubtitle;
+
+  Object encode() {
+    return <Object?>[
+      header,
+      sectionIndexTitle,
+      items,
+      headerButton?.encode(),
+      headerImage?.encode(),
+      headerSubtitle,
+    ];
+  }
+
+  static FCPListSectionData decode(Object result) {
+    result as List<Object?>;
+    return FCPListSectionData(
+      header: result[0] as String?,
+      sectionIndexTitle: result[1] as String?,
+      items: (result[2] as List<Object?>?)!.cast<WrappedListItemData?>(),
+      headerButton: result[3] != null
+          ? FCPButtonData.decode(result[3]! as List<Object?>)
+          : null,
+      headerImage: result[4] != null
+          ? FCPImageData.decode(result[4]! as List<Object?>)
+          : null,
+      headerSubtitle: result[5] as String?,
+    );
+  }
+}
+
+class FCPListItemData {
+  FCPListItemData({
+    required this.accessoryType,
+    this.accessoryImage,
+    this.detailText,
+    this.image,
+    this.isExplicitContent = false,
+    this.isPlaying = false,
+    this.playingIndicatorLocation = FCPListItemPlayingIndicatorLocation.trailing,
+    this.playbackProgress = 0,
+  });
+
+  FCPListItemAccessoryType accessoryType;
+
+  FCPImageData? accessoryImage;
+
+  String? detailText;
+
+  FCPImageData? image;
+
+  bool isExplicitContent;
+
+  bool isPlaying;
+
+  FCPListItemPlayingIndicatorLocation playingIndicatorLocation;
+
+  double playbackProgress;
+
+  Object encode() {
+    return <Object?>[
+      accessoryType.index,
+      accessoryImage?.encode(),
+      detailText,
+      image?.encode(),
+      isExplicitContent,
+      isPlaying,
+      playingIndicatorLocation.index,
+      playbackProgress,
+    ];
+  }
+
+  static FCPListItemData decode(Object result) {
+    result as List<Object?>;
+    return FCPListItemData(
+      accessoryType: FCPListItemAccessoryType.values[result[0]! as int],
+      accessoryImage: result[1] != null
+          ? FCPImageData.decode(result[1]! as List<Object?>)
+          : null,
+      detailText: result[2] as String?,
+      image: result[3] != null
+          ? FCPImageData.decode(result[3]! as List<Object?>)
+          : null,
+      isExplicitContent: result[4]! as bool,
+      isPlaying: result[5]! as bool,
+      playingIndicatorLocation: FCPListItemPlayingIndicatorLocation.values[result[6]! as int],
+      playbackProgress: result[7]! as double,
+    );
+  }
+}
+
+class FCPListImageRowItemData {
+  FCPListImageRowItemData({
+    required this.gridImages,
+    required this.imageTitles,
+  });
+
+  List<FCPImageData?> gridImages;
+
+  List<String?> imageTitles;
+
+  Object encode() {
+    return <Object?>[
+      gridImages,
+      imageTitles,
+    ];
+  }
+
+  static FCPListImageRowItemData decode(Object result) {
+    result as List<Object?>;
+    return FCPListImageRowItemData(
+      gridImages: (result[0] as List<Object?>?)!.cast<FCPImageData?>(),
+      imageTitles: (result[1] as List<Object?>?)!.cast<String?>(),
+    );
+  }
+}
+
+class FCPMessageListItemLeadingConfigurationData {
+  FCPMessageListItemLeadingConfigurationData({
+    this.leadingItem = FCPMessageLeadingItem.none,
+    this.leadingImage,
+    this.isUnread = false,
+  });
+
+  FCPMessageLeadingItem? leadingItem;
+
+  FCPImageData? leadingImage;
+
+  bool isUnread;
+
+  Object encode() {
+    return <Object?>[
+      leadingItem?.index,
+      leadingImage?.encode(),
+      isUnread,
+    ];
+  }
+
+  static FCPMessageListItemLeadingConfigurationData decode(Object result) {
+    result as List<Object?>;
+    return FCPMessageListItemLeadingConfigurationData(
+      leadingItem: result[0] != null
+          ? FCPMessageLeadingItem.values[result[0]! as int]
+          : null,
+      leadingImage: result[1] != null
+          ? FCPImageData.decode(result[1]! as List<Object?>)
+          : null,
+      isUnread: result[2]! as bool,
+    );
+  }
+}
+
+class FCPMessageListItemTrailingConfigurationData {
+  FCPMessageListItemTrailingConfigurationData({
+    this.trailingItem = FCPMessageTrailingItem.none,
+    this.trailingImage,
+  });
+
+  FCPMessageTrailingItem trailingItem;
+
+  FCPImageData? trailingImage;
+
+  Object encode() {
+    return <Object?>[
+      trailingItem.index,
+      trailingImage?.encode(),
+    ];
+  }
+
+  static FCPMessageListItemTrailingConfigurationData decode(Object result) {
+    result as List<Object?>;
+    return FCPMessageListItemTrailingConfigurationData(
+      trailingItem: FCPMessageTrailingItem.values[result[0]! as int],
+      trailingImage: result[1] != null
+          ? FCPImageData.decode(result[1]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
+class FCPListMessageItemData {
+  FCPListMessageItemData({
+    this.conversationIdentifier,
+    this.phoneOrEmailAddress,
+    this.detailText,
+    this.trailingText,
+    this.leadingConfiguration,
+    this.trailingConfiguration,
+  });
+
+  String? conversationIdentifier;
+
+  String? phoneOrEmailAddress;
+
+  String? detailText;
+
+  String? trailingText;
+
+  FCPMessageListItemLeadingConfigurationData? leadingConfiguration;
+
+  FCPMessageListItemTrailingConfigurationData? trailingConfiguration;
+
+  Object encode() {
+    return <Object?>[
+      conversationIdentifier,
+      phoneOrEmailAddress,
+      detailText,
+      trailingText,
+      leadingConfiguration?.encode(),
+      trailingConfiguration?.encode(),
+    ];
+  }
+
+  static FCPListMessageItemData decode(Object result) {
+    result as List<Object?>;
+    return FCPListMessageItemData(
+      conversationIdentifier: result[0] as String?,
+      phoneOrEmailAddress: result[1] as String?,
+      detailText: result[2] as String?,
+      trailingText: result[3] as String?,
+      leadingConfiguration: result[4] != null
+          ? FCPMessageListItemLeadingConfigurationData.decode(result[4]! as List<Object?>)
+          : null,
+      trailingConfiguration: result[5] != null
+          ? FCPMessageListItemTrailingConfigurationData.decode(result[5]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
+class WrappedListItemData {
+  WrappedListItemData({
+    required this.componentData,
+    required this.type,
+    this.text,
+    this.isEnabled = true,
+    this.listItemData,
+    this.imageRowItemData,
+    this.messageItemData,
+  });
+
+  FCPComponentData componentData;
+
+  FCPListTemplateItemType type;
+
+  String? text;
+
+  bool isEnabled;
+
+  FCPListItemData? listItemData;
+
+  FCPListImageRowItemData? imageRowItemData;
+
+  FCPListMessageItemData? messageItemData;
+
+  Object encode() {
+    return <Object?>[
+      componentData.encode(),
+      type.index,
+      text,
+      isEnabled,
+      listItemData?.encode(),
+      imageRowItemData?.encode(),
+      messageItemData?.encode(),
+    ];
+  }
+
+  static WrappedListItemData decode(Object result) {
+    result as List<Object?>;
+    return WrappedListItemData(
+      componentData: FCPComponentData.decode(result[0]! as List<Object?>),
+      type: FCPListTemplateItemType.values[result[1]! as int],
+      text: result[2] as String?,
+      isEnabled: result[3]! as bool,
+      listItemData: result[4] != null
+          ? FCPListItemData.decode(result[4]! as List<Object?>)
+          : null,
+      imageRowItemData: result[5] != null
+          ? FCPListImageRowItemData.decode(result[5]! as List<Object?>)
+          : null,
+      messageItemData: result[6] != null
+          ? FCPListMessageItemData.decode(result[6]! as List<Object?>)
           : null,
     );
   }
@@ -308,6 +639,9 @@ class FCPBarButtonData {
     required this.componentData,
     this.image,
     this.title,
+    this.style = FCPBarButtonStyle.rounded,
+    this.type = FCPBarButtonType.text,
+    this.isEnabled = true,
   });
 
   FCPComponentData componentData;
@@ -316,11 +650,20 @@ class FCPBarButtonData {
 
   String? title;
 
+  FCPBarButtonStyle style;
+
+  FCPBarButtonType type;
+
+  bool isEnabled;
+
   Object encode() {
     return <Object?>[
       componentData.encode(),
       image?.encode(),
       title,
+      style.index,
+      type.index,
+      isEnabled,
     ];
   }
 
@@ -332,6 +675,47 @@ class FCPBarButtonData {
           ? FCPImageData.decode(result[1]! as List<Object?>)
           : null,
       title: result[2] as String?,
+      style: FCPBarButtonStyle.values[result[3]! as int],
+      type: FCPBarButtonType.values[result[4]! as int],
+      isEnabled: result[5]! as bool,
+    );
+  }
+}
+
+class FCPButtonData {
+  FCPButtonData({
+    required this.componentData,
+    this.image,
+    this.title,
+    this.isEnabled = true,
+  });
+
+  FCPComponentData componentData;
+
+  FCPImageData? image;
+
+  String? title;
+
+  bool isEnabled;
+
+  Object encode() {
+    return <Object?>[
+      componentData.encode(),
+      image?.encode(),
+      title,
+      isEnabled,
+    ];
+  }
+
+  static FCPButtonData decode(Object result) {
+    result as List<Object?>;
+    return FCPButtonData(
+      componentData: FCPComponentData.decode(result[0]! as List<Object?>),
+      image: result[1] != null
+          ? FCPImageData.decode(result[1]! as List<Object?>)
+          : null,
+      title: result[2] as String?,
+      isEnabled: result[3]! as bool,
     );
   }
 }
@@ -349,32 +733,56 @@ class _TemplateHostApiCodec extends StandardMessageCodec {
     } else if (value is FCPBarButtonProvidingData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is FCPComponentData) {
+    } else if (value is FCPButtonData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is FCPImageData) {
+    } else if (value is FCPComponentData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is FCPListTemplateData) {
+    } else if (value is FCPImageData) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is FCPSystemImageData) {
+    } else if (value is FCPImageData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTabBarTemplateData) {
+    } else if (value is FCPListImageRowItemData) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTabData) {
+    } else if (value is FCPListItemData) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTemplateData) {
+    } else if (value is FCPListMessageItemData) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is WrappedTemplateData) {
+    } else if (value is FCPListSectionData) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is WrappedTemplateData) {
+    } else if (value is FCPListTemplateData) {
       buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is FCPMessageListItemLeadingConfigurationData) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is FCPMessageListItemTrailingConfigurationData) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is FCPTabBarTemplateData) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is FCPTabData) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is FCPTemplateData) {
+      buffer.putUint8(144);
+      writeValue(buffer, value.encode());
+    } else if (value is WrappedListItemData) {
+      buffer.putUint8(145);
+      writeValue(buffer, value.encode());
+    } else if (value is WrappedTemplateData) {
+      buffer.putUint8(146);
+      writeValue(buffer, value.encode());
+    } else if (value is WrappedTemplateData) {
+      buffer.putUint8(147);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -391,22 +799,38 @@ class _TemplateHostApiCodec extends StandardMessageCodec {
       case 130: 
         return FCPBarButtonProvidingData.decode(readValue(buffer)!);
       case 131: 
-        return FCPComponentData.decode(readValue(buffer)!);
+        return FCPButtonData.decode(readValue(buffer)!);
       case 132: 
-        return FCPImageData.decode(readValue(buffer)!);
+        return FCPComponentData.decode(readValue(buffer)!);
       case 133: 
-        return FCPListTemplateData.decode(readValue(buffer)!);
+        return FCPImageData.decode(readValue(buffer)!);
       case 134: 
-        return FCPSystemImageData.decode(readValue(buffer)!);
+        return FCPImageData.decode(readValue(buffer)!);
       case 135: 
-        return FCPTabBarTemplateData.decode(readValue(buffer)!);
+        return FCPListImageRowItemData.decode(readValue(buffer)!);
       case 136: 
-        return FCPTabData.decode(readValue(buffer)!);
+        return FCPListItemData.decode(readValue(buffer)!);
       case 137: 
-        return FCPTemplateData.decode(readValue(buffer)!);
+        return FCPListMessageItemData.decode(readValue(buffer)!);
       case 138: 
-        return WrappedTemplateData.decode(readValue(buffer)!);
+        return FCPListSectionData.decode(readValue(buffer)!);
       case 139: 
+        return FCPListTemplateData.decode(readValue(buffer)!);
+      case 140: 
+        return FCPMessageListItemLeadingConfigurationData.decode(readValue(buffer)!);
+      case 141: 
+        return FCPMessageListItemTrailingConfigurationData.decode(readValue(buffer)!);
+      case 142: 
+        return FCPTabBarTemplateData.decode(readValue(buffer)!);
+      case 143: 
+        return FCPTabData.decode(readValue(buffer)!);
+      case 144: 
+        return FCPTemplateData.decode(readValue(buffer)!);
+      case 145: 
+        return WrappedListItemData.decode(readValue(buffer)!);
+      case 146: 
+        return WrappedTemplateData.decode(readValue(buffer)!);
+      case 147: 
         return WrappedTemplateData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

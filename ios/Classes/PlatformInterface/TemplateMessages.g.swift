@@ -58,6 +58,44 @@ enum FCPTemplateCategory: Int {
   case modal = 1
 }
 
+enum FCPListTemplateItemType: Int {
+  case listItem = 0
+  case imageRowListItem = 1
+  case messageListItem = 2
+}
+
+enum FCPListItemAccessoryType: Int {
+  case none = 0
+  case disclosureIndicator = 1
+  case detailButton = 2
+}
+
+enum FCPListItemPlayingIndicatorLocation: Int {
+  case leading = 0
+  case trailing = 1
+}
+
+enum FCPMessageLeadingItem: Int {
+  case none = 0
+  case pin = 1
+  case star = 2
+}
+
+enum FCPMessageTrailingItem: Int {
+  case none = 0
+  case mute = 1
+}
+
+enum FCPBarButtonStyle: Int {
+  case none = 0
+  case rounded = 1
+}
+
+enum FCPBarButtonType: Int {
+  case text = 0
+  case image = 1
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPComponentData {
   var componentId: String
@@ -99,28 +137,9 @@ struct FCPImageData {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct FCPSystemImageData {
-  var symbolIdentifier: String
-
-  static func fromList(_ list: [Any?]) -> FCPSystemImageData? {
-    let symbolIdentifier = list[0] as! String
-
-    return FCPSystemImageData(
-      symbolIdentifier: symbolIdentifier
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      symbolIdentifier
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
 struct FCPTabData {
   var tabTitle: String? = nil
   var tabImage: FCPImageData? = nil
-  var tabSystemImage: FCPSystemImageData? = nil
   var showsTabBadge: Bool
 
   static func fromList(_ list: [Any?]) -> FCPTabData? {
@@ -129,16 +148,11 @@ struct FCPTabData {
     if let tabImageList: [Any?] = nilOrValue(list[1]) {
       tabImage = FCPImageData.fromList(tabImageList)
     }
-    var tabSystemImage: FCPSystemImageData? = nil
-    if let tabSystemImageList: [Any?] = nilOrValue(list[2]) {
-      tabSystemImage = FCPSystemImageData.fromList(tabSystemImageList)
-    }
-    let showsTabBadge = list[3] as! Bool
+    let showsTabBadge = list[2] as! Bool
 
     return FCPTabData(
       tabTitle: tabTitle,
       tabImage: tabImage,
-      tabSystemImage: tabSystemImage,
       showsTabBadge: showsTabBadge
     )
   }
@@ -146,7 +160,6 @@ struct FCPTabData {
     return [
       tabTitle,
       tabImage?.toList(),
-      tabSystemImage?.toList(),
       showsTabBadge,
     ]
   }
@@ -155,22 +168,25 @@ struct FCPTabData {
 /// Generated class from Pigeon that represents data sent in messages.
 struct WrappedTemplateData {
   var type: FCPTemplateType
+  var data: FCPTemplateData
   var listTemplateData: FCPListTemplateData? = nil
   var tabBarTemplateData: FCPTabBarTemplateData? = nil
 
   static func fromList(_ list: [Any?]) -> WrappedTemplateData? {
     let type = FCPTemplateType(rawValue: list[0] as! Int)!
+    let data = FCPTemplateData.fromList(list[1] as! [Any?])!
     var listTemplateData: FCPListTemplateData? = nil
-    if let listTemplateDataList: [Any?] = nilOrValue(list[1]) {
+    if let listTemplateDataList: [Any?] = nilOrValue(list[2]) {
       listTemplateData = FCPListTemplateData.fromList(listTemplateDataList)
     }
     var tabBarTemplateData: FCPTabBarTemplateData? = nil
-    if let tabBarTemplateDataList: [Any?] = nilOrValue(list[2]) {
+    if let tabBarTemplateDataList: [Any?] = nilOrValue(list[3]) {
       tabBarTemplateData = FCPTabBarTemplateData.fromList(tabBarTemplateDataList)
     }
 
     return WrappedTemplateData(
       type: type,
+      data: data,
       listTemplateData: listTemplateData,
       tabBarTemplateData: tabBarTemplateData
     )
@@ -178,6 +194,7 @@ struct WrappedTemplateData {
   func toList() -> [Any?] {
     return [
       type.rawValue,
+      data.toList(),
       listTemplateData?.toList(),
       tabBarTemplateData?.toList(),
     ]
@@ -215,47 +232,326 @@ struct FCPTemplateData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPTabBarTemplateData {
-  var data: FCPTemplateData
   var templates: [WrappedTemplateData?]
 
   static func fromList(_ list: [Any?]) -> FCPTabBarTemplateData? {
-    let data = FCPTemplateData.fromList(list[0] as! [Any?])!
-    let templates = list[1] as! [WrappedTemplateData?]
+    let templates = list[0] as! [WrappedTemplateData?]
 
     return FCPTabBarTemplateData(
-      data: data,
       templates: templates
     )
   }
   func toList() -> [Any?] {
     return [
-      data.toList(),
-      templates,
+      templates
     ]
   }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct FCPListTemplateData {
-  var data: FCPTemplateData
   var barButtonProvidingData: FCPBarButtonProvidingData? = nil
+  var sections: [FCPListSectionData?]
+  var emptyViewTitleVariants: [String?]
+  var emptyViewSubtitleVariants: [String?]
+  var title: String? = nil
 
   static func fromList(_ list: [Any?]) -> FCPListTemplateData? {
-    let data = FCPTemplateData.fromList(list[0] as! [Any?])!
     var barButtonProvidingData: FCPBarButtonProvidingData? = nil
-    if let barButtonProvidingDataList: [Any?] = nilOrValue(list[1]) {
+    if let barButtonProvidingDataList: [Any?] = nilOrValue(list[0]) {
       barButtonProvidingData = FCPBarButtonProvidingData.fromList(barButtonProvidingDataList)
     }
+    let sections = list[1] as! [FCPListSectionData?]
+    let emptyViewTitleVariants = list[2] as! [String?]
+    let emptyViewSubtitleVariants = list[3] as! [String?]
+    let title: String? = nilOrValue(list[4])
 
     return FCPListTemplateData(
-      data: data,
-      barButtonProvidingData: barButtonProvidingData
+      barButtonProvidingData: barButtonProvidingData,
+      sections: sections,
+      emptyViewTitleVariants: emptyViewTitleVariants,
+      emptyViewSubtitleVariants: emptyViewSubtitleVariants,
+      title: title
     )
   }
   func toList() -> [Any?] {
     return [
-      data.toList(),
       barButtonProvidingData?.toList(),
+      sections,
+      emptyViewTitleVariants,
+      emptyViewSubtitleVariants,
+      title,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FCPListSectionData {
+  var header: String? = nil
+  var sectionIndexTitle: String? = nil
+  var items: [WrappedListItemData?]
+  var headerButton: FCPButtonData? = nil
+  var headerImage: FCPImageData? = nil
+  var headerSubtitle: String? = nil
+
+  static func fromList(_ list: [Any?]) -> FCPListSectionData? {
+    let header: String? = nilOrValue(list[0])
+    let sectionIndexTitle: String? = nilOrValue(list[1])
+    let items = list[2] as! [WrappedListItemData?]
+    var headerButton: FCPButtonData? = nil
+    if let headerButtonList: [Any?] = nilOrValue(list[3]) {
+      headerButton = FCPButtonData.fromList(headerButtonList)
+    }
+    var headerImage: FCPImageData? = nil
+    if let headerImageList: [Any?] = nilOrValue(list[4]) {
+      headerImage = FCPImageData.fromList(headerImageList)
+    }
+    let headerSubtitle: String? = nilOrValue(list[5])
+
+    return FCPListSectionData(
+      header: header,
+      sectionIndexTitle: sectionIndexTitle,
+      items: items,
+      headerButton: headerButton,
+      headerImage: headerImage,
+      headerSubtitle: headerSubtitle
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      header,
+      sectionIndexTitle,
+      items,
+      headerButton?.toList(),
+      headerImage?.toList(),
+      headerSubtitle,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FCPListItemData {
+  var accessoryType: FCPListItemAccessoryType
+  var accessoryImage: FCPImageData? = nil
+  var detailText: String? = nil
+  var image: FCPImageData? = nil
+  var isExplicitContent: Bool
+  var isPlaying: Bool
+  var playingIndicatorLocation: FCPListItemPlayingIndicatorLocation
+  var playbackProgress: Double
+
+  static func fromList(_ list: [Any?]) -> FCPListItemData? {
+    let accessoryType = FCPListItemAccessoryType(rawValue: list[0] as! Int)!
+    var accessoryImage: FCPImageData? = nil
+    if let accessoryImageList: [Any?] = nilOrValue(list[1]) {
+      accessoryImage = FCPImageData.fromList(accessoryImageList)
+    }
+    let detailText: String? = nilOrValue(list[2])
+    var image: FCPImageData? = nil
+    if let imageList: [Any?] = nilOrValue(list[3]) {
+      image = FCPImageData.fromList(imageList)
+    }
+    let isExplicitContent = list[4] as! Bool
+    let isPlaying = list[5] as! Bool
+    let playingIndicatorLocation = FCPListItemPlayingIndicatorLocation(rawValue: list[6] as! Int)!
+    let playbackProgress = list[7] as! Double
+
+    return FCPListItemData(
+      accessoryType: accessoryType,
+      accessoryImage: accessoryImage,
+      detailText: detailText,
+      image: image,
+      isExplicitContent: isExplicitContent,
+      isPlaying: isPlaying,
+      playingIndicatorLocation: playingIndicatorLocation,
+      playbackProgress: playbackProgress
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      accessoryType.rawValue,
+      accessoryImage?.toList(),
+      detailText,
+      image?.toList(),
+      isExplicitContent,
+      isPlaying,
+      playingIndicatorLocation.rawValue,
+      playbackProgress,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FCPListImageRowItemData {
+  var gridImages: [FCPImageData?]
+  var imageTitles: [String?]
+
+  static func fromList(_ list: [Any?]) -> FCPListImageRowItemData? {
+    let gridImages = list[0] as! [FCPImageData?]
+    let imageTitles = list[1] as! [String?]
+
+    return FCPListImageRowItemData(
+      gridImages: gridImages,
+      imageTitles: imageTitles
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      gridImages,
+      imageTitles,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FCPMessageListItemLeadingConfigurationData {
+  var leadingItem: FCPMessageLeadingItem? = nil
+  var leadingImage: FCPImageData? = nil
+  var isUnread: Bool
+
+  static func fromList(_ list: [Any?]) -> FCPMessageListItemLeadingConfigurationData? {
+    var leadingItem: FCPMessageLeadingItem? = nil
+    let leadingItemEnumVal: Int? = nilOrValue(list[0])
+    if let leadingItemRawValue = leadingItemEnumVal {
+      leadingItem = FCPMessageLeadingItem(rawValue: leadingItemRawValue)!
+    }
+    var leadingImage: FCPImageData? = nil
+    if let leadingImageList: [Any?] = nilOrValue(list[1]) {
+      leadingImage = FCPImageData.fromList(leadingImageList)
+    }
+    let isUnread = list[2] as! Bool
+
+    return FCPMessageListItemLeadingConfigurationData(
+      leadingItem: leadingItem,
+      leadingImage: leadingImage,
+      isUnread: isUnread
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      leadingItem?.rawValue,
+      leadingImage?.toList(),
+      isUnread,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FCPMessageListItemTrailingConfigurationData {
+  var trailingItem: FCPMessageTrailingItem
+  var trailingImage: FCPImageData? = nil
+
+  static func fromList(_ list: [Any?]) -> FCPMessageListItemTrailingConfigurationData? {
+    let trailingItem = FCPMessageTrailingItem(rawValue: list[0] as! Int)!
+    var trailingImage: FCPImageData? = nil
+    if let trailingImageList: [Any?] = nilOrValue(list[1]) {
+      trailingImage = FCPImageData.fromList(trailingImageList)
+    }
+
+    return FCPMessageListItemTrailingConfigurationData(
+      trailingItem: trailingItem,
+      trailingImage: trailingImage
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      trailingItem.rawValue,
+      trailingImage?.toList(),
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FCPListMessageItemData {
+  var conversationIdentifier: String? = nil
+  var phoneOrEmailAddress: String? = nil
+  var detailText: String? = nil
+  var trailingText: String? = nil
+  var leadingConfiguration: FCPMessageListItemLeadingConfigurationData? = nil
+  var trailingConfiguration: FCPMessageListItemTrailingConfigurationData? = nil
+
+  static func fromList(_ list: [Any?]) -> FCPListMessageItemData? {
+    let conversationIdentifier: String? = nilOrValue(list[0])
+    let phoneOrEmailAddress: String? = nilOrValue(list[1])
+    let detailText: String? = nilOrValue(list[2])
+    let trailingText: String? = nilOrValue(list[3])
+    var leadingConfiguration: FCPMessageListItemLeadingConfigurationData? = nil
+    if let leadingConfigurationList: [Any?] = nilOrValue(list[4]) {
+      leadingConfiguration = FCPMessageListItemLeadingConfigurationData.fromList(leadingConfigurationList)
+    }
+    var trailingConfiguration: FCPMessageListItemTrailingConfigurationData? = nil
+    if let trailingConfigurationList: [Any?] = nilOrValue(list[5]) {
+      trailingConfiguration = FCPMessageListItemTrailingConfigurationData.fromList(trailingConfigurationList)
+    }
+
+    return FCPListMessageItemData(
+      conversationIdentifier: conversationIdentifier,
+      phoneOrEmailAddress: phoneOrEmailAddress,
+      detailText: detailText,
+      trailingText: trailingText,
+      leadingConfiguration: leadingConfiguration,
+      trailingConfiguration: trailingConfiguration
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      conversationIdentifier,
+      phoneOrEmailAddress,
+      detailText,
+      trailingText,
+      leadingConfiguration?.toList(),
+      trailingConfiguration?.toList(),
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct WrappedListItemData {
+  var componentData: FCPComponentData
+  var type: FCPListTemplateItemType
+  var text: String? = nil
+  var isEnabled: Bool
+  var listItemData: FCPListItemData? = nil
+  var imageRowItemData: FCPListImageRowItemData? = nil
+  var messageItemData: FCPListMessageItemData? = nil
+
+  static func fromList(_ list: [Any?]) -> WrappedListItemData? {
+    let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
+    let type = FCPListTemplateItemType(rawValue: list[1] as! Int)!
+    let text: String? = nilOrValue(list[2])
+    let isEnabled = list[3] as! Bool
+    var listItemData: FCPListItemData? = nil
+    if let listItemDataList: [Any?] = nilOrValue(list[4]) {
+      listItemData = FCPListItemData.fromList(listItemDataList)
+    }
+    var imageRowItemData: FCPListImageRowItemData? = nil
+    if let imageRowItemDataList: [Any?] = nilOrValue(list[5]) {
+      imageRowItemData = FCPListImageRowItemData.fromList(imageRowItemDataList)
+    }
+    var messageItemData: FCPListMessageItemData? = nil
+    if let messageItemDataList: [Any?] = nilOrValue(list[6]) {
+      messageItemData = FCPListMessageItemData.fromList(messageItemDataList)
+    }
+
+    return WrappedListItemData(
+      componentData: componentData,
+      type: type,
+      text: text,
+      isEnabled: isEnabled,
+      listItemData: listItemData,
+      imageRowItemData: imageRowItemData,
+      messageItemData: messageItemData
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      componentData.toList(),
+      type.rawValue,
+      text,
+      isEnabled,
+      listItemData?.toList(),
+      imageRowItemData?.toList(),
+      messageItemData?.toList(),
     ]
   }
 }
@@ -294,6 +590,9 @@ struct FCPBarButtonData {
   var componentData: FCPComponentData
   var image: FCPImageData? = nil
   var title: String? = nil
+  var style: FCPBarButtonStyle
+  var type: FCPBarButtonType
+  var isEnabled: Bool
 
   static func fromList(_ list: [Any?]) -> FCPBarButtonData? {
     let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
@@ -302,11 +601,17 @@ struct FCPBarButtonData {
       image = FCPImageData.fromList(imageList)
     }
     let title: String? = nilOrValue(list[2])
+    let style = FCPBarButtonStyle(rawValue: list[3] as! Int)!
+    let type = FCPBarButtonType(rawValue: list[4] as! Int)!
+    let isEnabled = list[5] as! Bool
 
     return FCPBarButtonData(
       componentData: componentData,
       image: image,
-      title: title
+      title: title,
+      style: style,
+      type: type,
+      isEnabled: isEnabled
     )
   }
   func toList() -> [Any?] {
@@ -314,6 +619,42 @@ struct FCPBarButtonData {
       componentData.toList(),
       image?.toList(),
       title,
+      style.rawValue,
+      type.rawValue,
+      isEnabled,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FCPButtonData {
+  var componentData: FCPComponentData
+  var image: FCPImageData? = nil
+  var title: String? = nil
+  var isEnabled: Bool
+
+  static func fromList(_ list: [Any?]) -> FCPButtonData? {
+    let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
+    var image: FCPImageData? = nil
+    if let imageList: [Any?] = nilOrValue(list[1]) {
+      image = FCPImageData.fromList(imageList)
+    }
+    let title: String? = nilOrValue(list[2])
+    let isEnabled = list[3] as! Bool
+
+    return FCPButtonData(
+      componentData: componentData,
+      image: image,
+      title: title,
+      isEnabled: isEnabled
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      componentData.toList(),
+      image?.toList(),
+      title,
+      isEnabled,
     ]
   }
 }
@@ -327,22 +668,38 @@ private class TemplateHostApiCodecReader: FlutterStandardReader {
     case 130:
       return FCPBarButtonProvidingData.fromList(self.readValue() as! [Any?])
     case 131:
-      return FCPComponentData.fromList(self.readValue() as! [Any?])
+      return FCPButtonData.fromList(self.readValue() as! [Any?])
     case 132:
-      return FCPImageData.fromList(self.readValue() as! [Any?])
+      return FCPComponentData.fromList(self.readValue() as! [Any?])
     case 133:
-      return FCPListTemplateData.fromList(self.readValue() as! [Any?])
+      return FCPImageData.fromList(self.readValue() as! [Any?])
     case 134:
-      return FCPSystemImageData.fromList(self.readValue() as! [Any?])
+      return FCPImageData.fromList(self.readValue() as! [Any?])
     case 135:
-      return FCPTabBarTemplateData.fromList(self.readValue() as! [Any?])
+      return FCPListImageRowItemData.fromList(self.readValue() as! [Any?])
     case 136:
-      return FCPTabData.fromList(self.readValue() as! [Any?])
+      return FCPListItemData.fromList(self.readValue() as! [Any?])
     case 137:
-      return FCPTemplateData.fromList(self.readValue() as! [Any?])
+      return FCPListMessageItemData.fromList(self.readValue() as! [Any?])
     case 138:
-      return WrappedTemplateData.fromList(self.readValue() as! [Any?])
+      return FCPListSectionData.fromList(self.readValue() as! [Any?])
     case 139:
+      return FCPListTemplateData.fromList(self.readValue() as! [Any?])
+    case 140:
+      return FCPMessageListItemLeadingConfigurationData.fromList(self.readValue() as! [Any?])
+    case 141:
+      return FCPMessageListItemTrailingConfigurationData.fromList(self.readValue() as! [Any?])
+    case 142:
+      return FCPTabBarTemplateData.fromList(self.readValue() as! [Any?])
+    case 143:
+      return FCPTabData.fromList(self.readValue() as! [Any?])
+    case 144:
+      return FCPTemplateData.fromList(self.readValue() as! [Any?])
+    case 145:
+      return WrappedListItemData.fromList(self.readValue() as! [Any?])
+    case 146:
+      return WrappedTemplateData.fromList(self.readValue() as! [Any?])
+    case 147:
       return WrappedTemplateData.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -361,32 +718,56 @@ private class TemplateHostApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? FCPBarButtonProvidingData {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPComponentData {
+    } else if let value = value as? FCPButtonData {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPImageData {
+    } else if let value = value as? FCPComponentData {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPListTemplateData {
+    } else if let value = value as? FCPImageData {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPSystemImageData {
+    } else if let value = value as? FCPImageData {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTabBarTemplateData {
+    } else if let value = value as? FCPListImageRowItemData {
       super.writeByte(135)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTabData {
+    } else if let value = value as? FCPListItemData {
       super.writeByte(136)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTemplateData {
+    } else if let value = value as? FCPListMessageItemData {
       super.writeByte(137)
       super.writeValue(value.toList())
-    } else if let value = value as? WrappedTemplateData {
+    } else if let value = value as? FCPListSectionData {
       super.writeByte(138)
       super.writeValue(value.toList())
-    } else if let value = value as? WrappedTemplateData {
+    } else if let value = value as? FCPListTemplateData {
       super.writeByte(139)
+      super.writeValue(value.toList())
+    } else if let value = value as? FCPMessageListItemLeadingConfigurationData {
+      super.writeByte(140)
+      super.writeValue(value.toList())
+    } else if let value = value as? FCPMessageListItemTrailingConfigurationData {
+      super.writeByte(141)
+      super.writeValue(value.toList())
+    } else if let value = value as? FCPTabBarTemplateData {
+      super.writeByte(142)
+      super.writeValue(value.toList())
+    } else if let value = value as? FCPTabData {
+      super.writeByte(143)
+      super.writeValue(value.toList())
+    } else if let value = value as? FCPTemplateData {
+      super.writeByte(144)
+      super.writeValue(value.toList())
+    } else if let value = value as? WrappedListItemData {
+      super.writeByte(145)
+      super.writeValue(value.toList())
+    } else if let value = value as? WrappedTemplateData {
+      super.writeByte(146)
+      super.writeValue(value.toList())
+    } else if let value = value as? WrappedTemplateData {
+      super.writeByte(147)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

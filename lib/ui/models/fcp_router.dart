@@ -8,7 +8,7 @@ abstract class FCPRouter {
   /// Clears the current template stack and pushes the given template as root.
   Future<void> pushRootTemplate(FCPRootTemplate template) async {
     return _templateHostApi.pushTemplate(
-      wrappedTemplateData: template.templateData,
+      wrappedTemplateData: template.serializedData,
       asRoot: true,
     );
   }

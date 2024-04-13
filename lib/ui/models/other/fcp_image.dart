@@ -4,7 +4,7 @@ import 'package:flutter_carplay_plus/src/platform_interface/template/template_me
 /// various components.
 class FCPImage {
   /// Converts this object to a related data model.
-  (FCPImageData?, FCPSystemImageData?) toImageData() {
+  FCPImageData toImageData() {
     throw UnimplementedError();
   }
 }

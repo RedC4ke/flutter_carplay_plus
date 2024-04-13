@@ -51,9 +51,12 @@ extension FCPBarButtonProviding {
 extension WrappedTemplateData {
     func toFCPTemplate() -> FCPTemplate {
         switch self.type {
-        case .tabBar: FCPTabBarTemplate(templateData: self.tabBarTemplateData!)
+        case .tabBar: FCPTabBarTemplate(tabBarTemplateData: self.tabBarTemplateData!)
+        case .list: FCPListTemplate(listTemplateData: self.listTemplateData!)
         // TODO: finish this method
-        default: FCPTabBarTemplate(templateData: self.tabBarTemplateData!)
+        default: {
+                throw fatalError("Unimplemented")
+            }()
         }
     }
 }

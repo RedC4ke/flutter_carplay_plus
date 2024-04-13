@@ -2,9 +2,10 @@ import 'package:flutter_carplay_plus/src/platform_interface/template/template_me
 import 'package:flutter_carplay_plus/ui/models/fcp_interactive_component.dart';
 
 /// A superclass for all templates.
-abstract base class FCPTemplate extends FCPInteractiveComponent {
+abstract base class FCPTemplate extends FCPComponent {
   /// Generated data model for [TemplateHostApi]
-  abstract final WrappedTemplateData templateData;
+  @override
+  WrappedTemplateData get serializedData;
 
   /// The category of the template.
   abstract final FCPTemplateCategory templateCategory;

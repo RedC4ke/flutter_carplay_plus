@@ -24,12 +24,11 @@ class FCPTab {
 
   /// Converts this object to a [FCPTabData] data object.
   FCPTabData toTabData() {
-    final (image, systemImage) = this.image?.toImageData() ?? (null, null);
+    final image = this.image?.toImageData();
 
     return FCPTabData(
       tabTitle: title,
       tabImage: image,
-      tabSystemImage: systemImage,
       showsTabBadge: showTabBadge,
     );
   }

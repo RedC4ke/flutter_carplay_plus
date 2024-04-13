@@ -14,15 +14,15 @@ final class FCPTabBarTemplate extends FCPFullscreenTemplate
   });
 
   @override
-  WrappedTemplateData get templateData {
+  WrappedTemplateData get serializedData {
     return WrappedTemplateData(
       type: FCPTemplateType.tabBar,
+      data: FCPTemplateData(
+        componentData: componentData,
+        category: templateCategory,
+      ),
       tabBarTemplateData: FCPTabBarTemplateData(
-        templateData: FCPTemplateData(
-          objectData: componentData,
-          category: templateCategory,
-        ),
-        templates: templates.map((e) => e.templateData).toList(),
+        templates: templates.map((e) => e.serializedData).toList(),
       ),
     );
   }

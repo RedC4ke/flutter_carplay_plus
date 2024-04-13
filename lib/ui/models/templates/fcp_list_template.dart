@@ -14,19 +14,20 @@ final class FCPListTemplate extends FCPFullscreenTemplate
     required this.sections,
   });
 
+  /// A list of [FCPListSection]s to display in the list.
+  final List<FCPListSection> sections;
+
   @override
-  WrappedTemplateData get templateData {
+  WrappedTemplateData get serializedData {
     return WrappedTemplateData(
       type: FCPTemplateType.list,
+      data: FCPTemplateData(
+        componentData: componentData,
+        category: templateCategory,
+      ),
       listTemplateData: FCPListTemplateData(
-        templateData: FCPTemplateData(
-          objectData: componentData,
-          category: templateCategory,
-        ),
+        sections: sections.map((e) => e.serializedData).toList(),
       ),
     );
   }
-
-  /// A list of [FCPListSection]s to display in the list.
-  final List<FCPListSection> sections;
 }
