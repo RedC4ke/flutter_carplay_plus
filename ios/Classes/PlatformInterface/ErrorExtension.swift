@@ -14,5 +14,18 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 
+extension FlutterError: Swift.Error {
+    convenience init(type: FCPError) {
+        self.init(code: type.name, message: type.rawValue, details: nil)
+    }
+}
 
-extension FlutterError: Swift.Error {}
+enum FCPError: String {
+    case malformed_template_model = "Your WrappedTemplateData model is malformed. Make sure that specified FCPTemplateType enum matches designated data field."
+}
+
+extension FCPError {
+    var name: String {
+        "\(self)"
+    }
+}

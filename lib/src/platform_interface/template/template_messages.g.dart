@@ -27,17 +27,14 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
 
 enum FCPImageSource {
   network,
+  file,
+  asset,
+  system,
 }
 
 enum FCPTemplateType {
   list,
-  modal,
   tabBar,
-}
-
-enum FCPTemplateCategory {
-  fullscreen,
-  modal,
 }
 
 enum FCPListTemplateItemType {
@@ -202,20 +199,16 @@ class FCPTemplateData {
   FCPTemplateData({
     required this.componentData,
     this.tabData,
-    required this.category,
   });
 
   FCPComponentData componentData;
 
   FCPTabData? tabData;
 
-  FCPTemplateCategory category;
-
   Object encode() {
     return <Object?>[
       componentData.encode(),
       tabData?.encode(),
-      category.index,
     ];
   }
 
@@ -226,7 +219,6 @@ class FCPTemplateData {
       tabData: result[1] != null
           ? FCPTabData.decode(result[1]! as List<Object?>)
           : null,
-      category: FCPTemplateCategory.values[result[2]! as int],
     );
   }
 }

@@ -3,11 +3,11 @@ import UIKit
 
 public class FlutterCarplayPlusPlugin: NSObject, FlutterPlugin, FlutterApplicationLifeCycleDelegate {
     public static var instance: FlutterCarplayPlusPlugin?
+    let messenger: FlutterBinaryMessenger
     
-    static let templateHostApi = Template
+    static let templateHostApi = TemplateHostApiImpl()
     
-    var messenger: FlutterBinaryMessenger
-    var coreFlutterApi: CoreFlutterApi
+    let coreFlutterApi: CoreFlutterApi
     
     init(registrar: FlutterPluginRegistrar) {
         self.messenger = registrar.messenger()
@@ -17,6 +17,8 @@ public class FlutterCarplayPlusPlugin: NSObject, FlutterPlugin, FlutterApplicati
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         instance = FlutterCarplayPlusPlugin(registrar: registrar)
+        
+        TemplateHostApiSetup.setUp(binaryMessenger: registrar.messenger(), api: templateHostApi)
         
         registrar.addApplicationDelegate(instance!)
     }

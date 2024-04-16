@@ -45,6 +45,9 @@ class FCPComponentData {
 
 enum FCPImageSource {
   network,
+  file,
+  asset,
+  system,
 }
 
 class FCPImageData {
@@ -81,7 +84,6 @@ class FCPTabData {
 
 enum FCPTemplateType {
   list,
-  modal,
   tabBar,
 }
 
@@ -100,22 +102,14 @@ class WrappedTemplateData {
 }
 
 //! Templates
-
-enum FCPTemplateCategory {
-  fullscreen,
-  modal,
-}
-
 class FCPTemplateData {
   FCPTemplateData({
     required this.componentData,
-    required this.category,
     this.tabData,
   });
 
   final FCPComponentData componentData;
   final FCPTabData? tabData;
-  final FCPTemplateCategory category;
 }
 
 class FCPTabBarTemplateData {

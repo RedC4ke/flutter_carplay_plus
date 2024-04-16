@@ -11,7 +11,7 @@ final class FCPTabBarTemplate extends FCPFullscreenTemplate
   /// Creates a new instance of [FCPTabBarTemplate].
   FCPTabBarTemplate({
     required this.templates,
-  });
+  }) : super(tabData: null);
 
   @override
   WrappedTemplateData get serializedData {
@@ -19,7 +19,6 @@ final class FCPTabBarTemplate extends FCPFullscreenTemplate
       type: FCPTemplateType.tabBar,
       data: FCPTemplateData(
         componentData: componentData,
-        category: templateCategory,
       ),
       tabBarTemplateData: FCPTabBarTemplateData(
         templates: templates.map((e) => e.serializedData).toList(),

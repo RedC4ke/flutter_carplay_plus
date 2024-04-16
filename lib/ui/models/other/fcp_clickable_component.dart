@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter_carplay_plus/ui/models/fcp_interactive_component.dart';
+import 'package:flutter_carplay_plus/ui/models/fcp_component.dart';
 
 /// A superclass for all clickable components.
 abstract class FCPClickableComponent extends FCPComponent {

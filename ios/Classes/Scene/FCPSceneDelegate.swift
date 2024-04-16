@@ -9,29 +9,62 @@ import CarPlay
 
 @available(iOS 14.0, *)
 class FCPSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
-  static private var interfaceController: CPInterfaceController?
+    private static var interfaceController: CPInterfaceController?
     
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene,
-                                    didConnect interfaceController: CPInterfaceController) {
+                                  didConnect interfaceController: CPInterfaceController)
+    {
         FCPSceneDelegate.interfaceController = interfaceController
         
-        connectionStatusChanged(to: CarplayConnectionStatus.connected)
+        connectionStatusChanged(to: .connected)
 //        let rootTemplate = SwiftFlutterCarplayPlugin.rootTemplate
-//        
+//
 //        if rootTemplate != nil {
 //            FCPSceneDelegate.interfaceController?.setRootTemplate(rootTemplate!, animated: SwiftFlutterCarplayPlugin.animated, completion: nil)
 //        }
-      }
+    }
   
     func sceneDidBecomeActive(_ scene: UIScene) {
-        connectionStatusChanged(to: CarplayConnectionStatus.connected)
+        connectionStatusChanged(to: .connected)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
-        connectionStatusChanged(to: CarplayConnectionStatus.disconnected)
+        connectionStatusChanged(to: .disconnected)
+    }
+    
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        connectionStatusChanged(to: .background)
     }
     
     private func connectionStatusChanged(to status: CarplayConnectionStatus) {
-        FlutterCarplayPlusPlugin.instance?.coreFlutterApi.onConnectionStatusChanged(status: status, completion: {_ in })
+        FlutterCarplayPlusPlugin.instance?.coreFlutterApi.onConnectionStatusChanged(status: status, completion: { _ in })
+    }
+    
+    public static func setRoot(template: FCPTemplate) {
+        interfaceController?.setRootTemplate(template)
+    }
+    
+    public static func push(template: FCPFullscreenTemplate, animated: Bool) {
+        interfaceController?.pushTemplate(template, animated: animated, completion: { _, _ in })
+    }
+    
+    public static func popTemplate(animated: Bool) {
+        interfaceController?.popTemplate(animated: animated, completion: { _, _ in })
+    }
+    
+    public static func popToRootTemplate(animated: Bool) {
+        interfaceController?.popToRootTemplate(animated: animated, completion: { _, _ in })
+    }
+    
+    public static func present(template: FCPModalTemplate, animated: Bool) {
+        interfaceController?.presentTemplate(template, animated: animated, completion: { _, _ in })
+    }
+    
+    public static func dismissTemplate(animated: Bool) {
+        interfaceController?.dismissTemplate(animated: animated, completion: { _, _ in })
+    }
+    
+    public static func getTemplates() -> [FCPTemplate] {
+        return interfaceController?.fcpTemplates ?? []
     }
 }

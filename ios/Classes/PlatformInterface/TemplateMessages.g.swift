@@ -45,17 +45,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 enum FCPImageSource: Int {
   case network = 0
+  case file = 1
+  case asset = 2
+  case system = 3
 }
 
 enum FCPTemplateType: Int {
   case list = 0
-  case modal = 1
-  case tabBar = 2
-}
-
-enum FCPTemplateCategory: Int {
-  case fullscreen = 0
-  case modal = 1
+  case tabBar = 1
 }
 
 enum FCPListTemplateItemType: Int {
@@ -205,7 +202,6 @@ struct WrappedTemplateData {
 struct FCPTemplateData {
   var componentData: FCPComponentData
   var tabData: FCPTabData? = nil
-  var category: FCPTemplateCategory
 
   static func fromList(_ list: [Any?]) -> FCPTemplateData? {
     let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
@@ -213,19 +209,16 @@ struct FCPTemplateData {
     if let tabDataList: [Any?] = nilOrValue(list[1]) {
       tabData = FCPTabData.fromList(tabDataList)
     }
-    let category = FCPTemplateCategory(rawValue: list[2] as! Int)!
 
     return FCPTemplateData(
       componentData: componentData,
-      tabData: tabData,
-      category: category
+      tabData: tabData
     )
   }
   func toList() -> [Any?] {
     return [
       componentData.toList(),
       tabData?.toList(),
-      category.rawValue,
     ]
   }
 }

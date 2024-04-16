@@ -8,25 +8,26 @@
 import CarPlay
 import Foundation
 
-class FCPListTemplate: CPListTemplate, FCPTemplate, FCPBarButtonProviding {
+class FCPListTemplate: CPListTemplate, FCPFullscreenTemplate, FCPBarButtonProviding {
     let uuid: String
-    var tabData: FCPTabData?
-    var barButtonProvidingData: FCPBarButtonProvidingData?
+    let templateData: FCPTemplateData
+    let barButonProvidingData: FCPBarButtonProvidingData?
 
-    init(listTemplateData: FCPListTemplateData) {
-        let templateData = listTemplateData.data
-
+    init(with templateData: FCPTemplateData, listTemplateData: FCPListTemplateData) throws {
         self.uuid = templateData.componentData.componentId
-        self.tabData = templateData.tabData
-
+        self.templateData = templateData
         self.barButtonProvidingData = listTemplateData.barButtonProvidingData
 
         // TODO: fill the rest of the params
-        super.init(title: "", sections: [])
+        super.init(title: listTemplateData.title, sections: [])
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func wrap() -> WrappedTemplateData {
+        return WrappedTemplateData(type: .list, data: templateData)
     }
 }

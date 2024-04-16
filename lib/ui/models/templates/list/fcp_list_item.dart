@@ -1,5 +1,5 @@
 import 'package:flutter_carplay_plus/src/platform_interface/template/template_messages.g.dart';
-import 'package:flutter_carplay_plus/ui/models/fcp_interactive_component.dart';
+import 'package:flutter_carplay_plus/ui/models/fcp_component.dart';
 import 'package:flutter_carplay_plus/ui/models/other/fcp_image.dart';
 import 'package:flutter_carplay_plus/ui/models/templates/list/fcp_list_section.dart';
 

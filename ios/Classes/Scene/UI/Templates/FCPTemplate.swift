@@ -6,57 +6,53 @@
 //
 
 import CarPlay
+import Flutter
 import Foundation
 
-protocol FCPTemplate: FCPInteractiveComponent, CPTemplate {
-    var tabData: FCPTabData? { get }
+protocol FCPTemplate: CPTemplate, FCPComponent {
+    var templateData: FCPTemplateData { get }
+    func wrap() -> WrappedTemplateData
 }
 
 extension FCPTemplate {
-    private var tabData: FCPTabData? {
+    var templateData: FCPTemplateData {
         set {
-            if let newValue = tabData {
-                self.setTabData(to: newValue)
-            }
+            self.setTemplateData(to: newValue)
         }
-        get { tabData }
+        get { self.templateData }
     }
 
-    func setTabData(to fcpTabData: FCPTabData) {
+    private func setTemplateData(to templateData: FCPTemplateData) {
+        if let tabData = templateData.tabData {
+            self.setTabData(to: tabData)
+        }
+    }
+
+    private func setTabData(to fcpTabData: FCPTabData) {
         self.tabTitle = fcpTabData.tabTitle
         self.showsTabBadge = fcpTabData.showsTabBadge
         // TODO: fill image data
     }
 }
 
-protocol FCPBarButtonProviding: CPBarButtonProviding {
-    var barButtonProvidingData: FCPBarButtonProvidingData? { get }
-}
+protocol FCPModalTemplate: FCPTemplate {}
 
-extension FCPBarButtonProviding {
-    private var barButtonProvidingData: FCPBarButtonProvidingData? {
-        set {
-            if let newValue = barButtonProvidingData {
-                self.setBarButtonProvidingData(to: newValue)
-            }
-        }
-        get { barButtonProvidingData }
-    }
-
-    func setBarButtonProvidingData(to: FCPBarButtonProvidingData) {
-        // TODO: add button components
-    }
-}
+protocol FCPFullscreenTemplate: FCPTemplate {}
 
 extension WrappedTemplateData {
-    func toFCPTemplate() -> FCPTemplate {
+    func unwrap() throws -> FCPTemplate {
+        let templateData = self.data
         switch self.type {
-        case .tabBar: FCPTabBarTemplate(tabBarTemplateData: self.tabBarTemplateData!)
-        case .list: FCPListTemplate(listTemplateData: self.listTemplateData!)
-        // TODO: finish this method
-        default: {
-                throw fatalError("Unimplemented")
-            }()
+        case .tabBar:
+            if let tabBarTemplateData = self.tabBarTemplateData {
+                return try FCPTabBarTemplate(with: templateData, tabBarTemplateData: tabBarTemplateData)
+            }
+        case .list:
+            if let listTemplateData = self.listTemplateData {
+                return try FCPListTemplate(with: templateData, listTemplateData: listTemplateData)
+            }
         }
+
+        throw FlutterError(type: .malformed_template_model)
     }
 }
