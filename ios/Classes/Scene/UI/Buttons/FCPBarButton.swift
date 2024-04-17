@@ -17,7 +17,7 @@ class FCPBarButton: CPBarButton, FCPComponent {
         if data.type == .text {
             super.init(title: data.title ?? "", handler: <#T##CPBarButtonHandler?##CPBarButtonHandler?##(CPBarButton) -> Void#>)
         } else {
-            super.init(image: UIImage.fromFCPImageData(data.image!) ?? UIImage(), handler: <#T##CPBarButtonHandler?##CPBarButtonHandler?##(CPBarButton) -> Void#>)
+            super.init(image: UIImage.fromFCPImageData(data.image) ?? UIImage(), handler: <#T##CPBarButtonHandler?##CPBarButtonHandler?##(CPBarButton) -> Void#>)
         }
     }
 

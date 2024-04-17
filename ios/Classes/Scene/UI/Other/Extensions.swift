@@ -12,16 +12,20 @@ import Foundation
 private let placeholderImage = UIImage(systemName: "questionmark")
 
 extension UIImage {
-    static func fromFCPImageData(_ data: FCPImageData) -> UIImage? {
-        switch data.source {
+    static func fromFCPImageData(_ data: FCPImageData?) -> UIImage? {
+        guard let imageData = data else {
+            return nil
+        }
+
+        switch imageData.source {
         case .network:
-            return fromNetwork(url: data.path)
+            return fromNetwork(url: imageData.path)
         case .asset:
-            return fromAsset(path: data.path)
+            return fromAsset(path: imageData.path)
         case .file:
-            return fromFile(path: data.path)
+            return fromFile(path: imageData.path)
         case .system:
-            return fromSystem(name: data.path)
+            return fromSystem(name: imageData.path)
         }
     }
 
@@ -76,5 +80,24 @@ extension CPInterfaceController {
 
     func setRootTemplate(_ rootTemplate: FCPTemplate) {
         setRootTemplate(rootTemplate, animated: true, completion: { _, _ in })
+    }
+}
+
+extension FCPListItemAccessoryType {
+    var cp: CPListItemAccessoryType {
+        switch self {
+        case .none: return .none
+        case .cloud: return .cloud
+        case .disclosureIndicator: return .disclosureIndicator
+        }
+    }
+}
+
+extension FCPListItemPlayingIndicatorLocation {
+    var cp: CPListItemPlayingIndicatorLocation {
+        switch self {
+        case .leading: return .leading
+        case .trailing: return .trailing
+        }
     }
 }

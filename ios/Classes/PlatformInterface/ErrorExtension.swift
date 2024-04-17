@@ -21,7 +21,9 @@ extension FlutterError: Swift.Error {
 }
 
 enum FCPError: String {
-    case malformed_template_model = "Your WrappedTemplateData model is malformed. Make sure that specified FCPTemplateType enum matches designated data field."
+    case malformed_template_model = "Your WrappedTemplateData model is malformed. Make sure that specified FCPTemplateType enum value matches designated data field."
+    case malformed_list_item_model = "Your WrappedListItemData model is malformed. Make sure that specified FCPListTemplateItemType enum value matches designated data field."
+    case unimplemented = "This feature is still in development."
 }
 
 extension FCPError {

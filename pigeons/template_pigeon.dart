@@ -167,12 +167,24 @@ enum FCPListTemplateItemType {
 enum FCPListItemAccessoryType {
   none,
   disclosureIndicator,
-  detailButton,
+  cloud,
 }
 
 enum FCPListItemPlayingIndicatorLocation {
   leading,
   trailing,
+}
+
+class FCPListTemplateItemData {
+  FCPListTemplateItemData({
+    required this.componentData,
+    this.text,
+    this.isEnabled = true,
+  });
+
+  final FCPComponentData componentData;
+  final String? text;
+  final bool isEnabled;
 }
 
 class FCPListItemData {
@@ -263,19 +275,15 @@ class FCPListMessageItemData {
 
 class WrappedListItemData {
   WrappedListItemData({
-    required this.componentData,
     required this.type,
-    required this.text,
-    this.isEnabled = true,
+    required this.itemData,
     this.listItemData,
     this.imageRowItemData,
     this.messageItemData,
   });
 
-  final FCPComponentData componentData;
   final FCPListTemplateItemType type;
-  final String? text;
-  final bool isEnabled;
+  final FCPListTemplateItemData itemData;
 
   final FCPListItemData? listItemData;
   final FCPListImageRowItemData? imageRowItemData;

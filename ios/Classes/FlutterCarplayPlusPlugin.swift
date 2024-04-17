@@ -8,11 +8,13 @@ public class FlutterCarplayPlusPlugin: NSObject, FlutterPlugin, FlutterApplicati
     static let templateHostApi = TemplateHostApiImpl()
     
     let coreFlutterApi: CoreFlutterApi
+    let templateFlutterApi: TemplateFlutterApi
     
     init(registrar: FlutterPluginRegistrar) {
         self.messenger = registrar.messenger()
         
         self.coreFlutterApi = CoreFlutterApi(binaryMessenger: messenger)
+        self.templateFlutterApi = TemplateFlutterApi(binaryMessenger: messenger)
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {

@@ -9,3 +9,9 @@ import CarPlay
 import Foundation
 
 class FCPListSection: CPListSection {}
+
+extension FCPListSectionData {
+    func unwrap() -> FCPListSection {
+        return FCPListSection(items: <#T##[CPListItem]#>, header: <#T##String?#>, sectionIndexTitle: <#T##String?#>)
+    }
+}

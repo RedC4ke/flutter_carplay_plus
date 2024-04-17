@@ -9,4 +9,6 @@ import Foundation
 
 protocol FCPComponent {
     var uuid: String { get }
+    
+    
 }

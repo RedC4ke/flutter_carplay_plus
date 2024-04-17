@@ -64,7 +64,7 @@ enum FCPListTemplateItemType: Int {
 enum FCPListItemAccessoryType: Int {
   case none = 0
   case disclosureIndicator = 1
-  case detailButton = 2
+  case cloud = 2
 }
 
 enum FCPListItemPlayingIndicatorLocation: Int {
@@ -323,6 +323,32 @@ struct FCPListSectionData {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
+struct FCPListTemplateItemData {
+  var componentData: FCPComponentData
+  var text: String? = nil
+  var isEnabled: Bool
+
+  static func fromList(_ list: [Any?]) -> FCPListTemplateItemData? {
+    let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
+    let text: String? = nilOrValue(list[1])
+    let isEnabled = list[2] as! Bool
+
+    return FCPListTemplateItemData(
+      componentData: componentData,
+      text: text,
+      isEnabled: isEnabled
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      componentData.toList(),
+      text,
+      isEnabled,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
 struct FCPListItemData {
   var accessoryType: FCPListItemAccessoryType
   var accessoryImage: FCPImageData? = nil
@@ -500,37 +526,31 @@ struct FCPListMessageItemData {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct WrappedListItemData {
-  var componentData: FCPComponentData
   var type: FCPListTemplateItemType
-  var text: String? = nil
-  var isEnabled: Bool
+  var itemData: FCPListTemplateItemData
   var listItemData: FCPListItemData? = nil
   var imageRowItemData: FCPListImageRowItemData? = nil
   var messageItemData: FCPListMessageItemData? = nil
 
   static func fromList(_ list: [Any?]) -> WrappedListItemData? {
-    let componentData = FCPComponentData.fromList(list[0] as! [Any?])!
-    let type = FCPListTemplateItemType(rawValue: list[1] as! Int)!
-    let text: String? = nilOrValue(list[2])
-    let isEnabled = list[3] as! Bool
+    let type = FCPListTemplateItemType(rawValue: list[0] as! Int)!
+    let itemData = FCPListTemplateItemData.fromList(list[1] as! [Any?])!
     var listItemData: FCPListItemData? = nil
-    if let listItemDataList: [Any?] = nilOrValue(list[4]) {
+    if let listItemDataList: [Any?] = nilOrValue(list[2]) {
       listItemData = FCPListItemData.fromList(listItemDataList)
     }
     var imageRowItemData: FCPListImageRowItemData? = nil
-    if let imageRowItemDataList: [Any?] = nilOrValue(list[5]) {
+    if let imageRowItemDataList: [Any?] = nilOrValue(list[3]) {
       imageRowItemData = FCPListImageRowItemData.fromList(imageRowItemDataList)
     }
     var messageItemData: FCPListMessageItemData? = nil
-    if let messageItemDataList: [Any?] = nilOrValue(list[6]) {
+    if let messageItemDataList: [Any?] = nilOrValue(list[4]) {
       messageItemData = FCPListMessageItemData.fromList(messageItemDataList)
     }
 
     return WrappedListItemData(
-      componentData: componentData,
       type: type,
-      text: text,
-      isEnabled: isEnabled,
+      itemData: itemData,
       listItemData: listItemData,
       imageRowItemData: imageRowItemData,
       messageItemData: messageItemData
@@ -538,10 +558,8 @@ struct WrappedListItemData {
   }
   func toList() -> [Any?] {
     return [
-      componentData.toList(),
       type.rawValue,
-      text,
-      isEnabled,
+      itemData.toList(),
       listItemData?.toList(),
       imageRowItemData?.toList(),
       messageItemData?.toList(),
@@ -679,20 +697,22 @@ private class TemplateHostApiCodecReader: FlutterStandardReader {
     case 139:
       return FCPListTemplateData.fromList(self.readValue() as! [Any?])
     case 140:
-      return FCPMessageListItemLeadingConfigurationData.fromList(self.readValue() as! [Any?])
+      return FCPListTemplateItemData.fromList(self.readValue() as! [Any?])
     case 141:
-      return FCPMessageListItemTrailingConfigurationData.fromList(self.readValue() as! [Any?])
+      return FCPMessageListItemLeadingConfigurationData.fromList(self.readValue() as! [Any?])
     case 142:
-      return FCPTabBarTemplateData.fromList(self.readValue() as! [Any?])
+      return FCPMessageListItemTrailingConfigurationData.fromList(self.readValue() as! [Any?])
     case 143:
-      return FCPTabData.fromList(self.readValue() as! [Any?])
+      return FCPTabBarTemplateData.fromList(self.readValue() as! [Any?])
     case 144:
-      return FCPTemplateData.fromList(self.readValue() as! [Any?])
+      return FCPTabData.fromList(self.readValue() as! [Any?])
     case 145:
-      return WrappedListItemData.fromList(self.readValue() as! [Any?])
+      return FCPTemplateData.fromList(self.readValue() as! [Any?])
     case 146:
-      return WrappedTemplateData.fromList(self.readValue() as! [Any?])
+      return WrappedListItemData.fromList(self.readValue() as! [Any?])
     case 147:
+      return WrappedTemplateData.fromList(self.readValue() as! [Any?])
+    case 148:
       return WrappedTemplateData.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -738,29 +758,32 @@ private class TemplateHostApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? FCPListTemplateData {
       super.writeByte(139)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPMessageListItemLeadingConfigurationData {
+    } else if let value = value as? FCPListTemplateItemData {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPMessageListItemTrailingConfigurationData {
+    } else if let value = value as? FCPMessageListItemLeadingConfigurationData {
       super.writeByte(141)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTabBarTemplateData {
+    } else if let value = value as? FCPMessageListItemTrailingConfigurationData {
       super.writeByte(142)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTabData {
+    } else if let value = value as? FCPTabBarTemplateData {
       super.writeByte(143)
       super.writeValue(value.toList())
-    } else if let value = value as? FCPTemplateData {
+    } else if let value = value as? FCPTabData {
       super.writeByte(144)
       super.writeValue(value.toList())
-    } else if let value = value as? WrappedListItemData {
+    } else if let value = value as? FCPTemplateData {
       super.writeByte(145)
       super.writeValue(value.toList())
-    } else if let value = value as? WrappedTemplateData {
+    } else if let value = value as? WrappedListItemData {
       super.writeByte(146)
       super.writeValue(value.toList())
     } else if let value = value as? WrappedTemplateData {
       super.writeByte(147)
+      super.writeValue(value.toList())
+    } else if let value = value as? WrappedTemplateData {
+      super.writeByte(148)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

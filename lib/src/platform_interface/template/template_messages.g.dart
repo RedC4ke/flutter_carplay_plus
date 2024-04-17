@@ -46,7 +46,7 @@ enum FCPListTemplateItemType {
 enum FCPListItemAccessoryType {
   none,
   disclosureIndicator,
-  detailButton,
+  cloud,
 }
 
 enum FCPListItemPlayingIndicatorLocation {
@@ -337,6 +337,37 @@ class FCPListSectionData {
   }
 }
 
+class FCPListTemplateItemData {
+  FCPListTemplateItemData({
+    required this.componentData,
+    this.text,
+    this.isEnabled = true,
+  });
+
+  FCPComponentData componentData;
+
+  String? text;
+
+  bool isEnabled;
+
+  Object encode() {
+    return <Object?>[
+      componentData.encode(),
+      text,
+      isEnabled,
+    ];
+  }
+
+  static FCPListTemplateItemData decode(Object result) {
+    result as List<Object?>;
+    return FCPListTemplateItemData(
+      componentData: FCPComponentData.decode(result[0]! as List<Object?>),
+      text: result[1] as String?,
+      isEnabled: result[2]! as bool,
+    );
+  }
+}
+
 class FCPListItemData {
   FCPListItemData({
     required this.accessoryType,
@@ -538,22 +569,16 @@ class FCPListMessageItemData {
 
 class WrappedListItemData {
   WrappedListItemData({
-    required this.componentData,
     required this.type,
-    this.text,
-    this.isEnabled = true,
+    required this.itemData,
     this.listItemData,
     this.imageRowItemData,
     this.messageItemData,
   });
 
-  FCPComponentData componentData;
-
   FCPListTemplateItemType type;
 
-  String? text;
-
-  bool isEnabled;
+  FCPListTemplateItemData itemData;
 
   FCPListItemData? listItemData;
 
@@ -563,10 +588,8 @@ class WrappedListItemData {
 
   Object encode() {
     return <Object?>[
-      componentData.encode(),
       type.index,
-      text,
-      isEnabled,
+      itemData.encode(),
       listItemData?.encode(),
       imageRowItemData?.encode(),
       messageItemData?.encode(),
@@ -576,18 +599,16 @@ class WrappedListItemData {
   static WrappedListItemData decode(Object result) {
     result as List<Object?>;
     return WrappedListItemData(
-      componentData: FCPComponentData.decode(result[0]! as List<Object?>),
-      type: FCPListTemplateItemType.values[result[1]! as int],
-      text: result[2] as String?,
-      isEnabled: result[3]! as bool,
-      listItemData: result[4] != null
-          ? FCPListItemData.decode(result[4]! as List<Object?>)
+      type: FCPListTemplateItemType.values[result[0]! as int],
+      itemData: FCPListTemplateItemData.decode(result[1]! as List<Object?>),
+      listItemData: result[2] != null
+          ? FCPListItemData.decode(result[2]! as List<Object?>)
           : null,
-      imageRowItemData: result[5] != null
-          ? FCPListImageRowItemData.decode(result[5]! as List<Object?>)
+      imageRowItemData: result[3] != null
+          ? FCPListImageRowItemData.decode(result[3]! as List<Object?>)
           : null,
-      messageItemData: result[6] != null
-          ? FCPListMessageItemData.decode(result[6]! as List<Object?>)
+      messageItemData: result[4] != null
+          ? FCPListMessageItemData.decode(result[4]! as List<Object?>)
           : null,
     );
   }
@@ -752,29 +773,32 @@ class _TemplateHostApiCodec extends StandardMessageCodec {
     } else if (value is FCPListTemplateData) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is FCPMessageListItemLeadingConfigurationData) {
+    } else if (value is FCPListTemplateItemData) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is FCPMessageListItemTrailingConfigurationData) {
+    } else if (value is FCPMessageListItemLeadingConfigurationData) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTabBarTemplateData) {
+    } else if (value is FCPMessageListItemTrailingConfigurationData) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTabData) {
+    } else if (value is FCPTabBarTemplateData) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is FCPTemplateData) {
+    } else if (value is FCPTabData) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is WrappedListItemData) {
+    } else if (value is FCPTemplateData) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is WrappedTemplateData) {
+    } else if (value is WrappedListItemData) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
     } else if (value is WrappedTemplateData) {
       buffer.putUint8(147);
+      writeValue(buffer, value.encode());
+    } else if (value is WrappedTemplateData) {
+      buffer.putUint8(148);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -809,20 +833,22 @@ class _TemplateHostApiCodec extends StandardMessageCodec {
       case 139: 
         return FCPListTemplateData.decode(readValue(buffer)!);
       case 140: 
-        return FCPMessageListItemLeadingConfigurationData.decode(readValue(buffer)!);
+        return FCPListTemplateItemData.decode(readValue(buffer)!);
       case 141: 
-        return FCPMessageListItemTrailingConfigurationData.decode(readValue(buffer)!);
+        return FCPMessageListItemLeadingConfigurationData.decode(readValue(buffer)!);
       case 142: 
-        return FCPTabBarTemplateData.decode(readValue(buffer)!);
+        return FCPMessageListItemTrailingConfigurationData.decode(readValue(buffer)!);
       case 143: 
-        return FCPTabData.decode(readValue(buffer)!);
+        return FCPTabBarTemplateData.decode(readValue(buffer)!);
       case 144: 
-        return FCPTemplateData.decode(readValue(buffer)!);
+        return FCPTabData.decode(readValue(buffer)!);
       case 145: 
-        return WrappedListItemData.decode(readValue(buffer)!);
+        return FCPTemplateData.decode(readValue(buffer)!);
       case 146: 
-        return WrappedTemplateData.decode(readValue(buffer)!);
+        return WrappedListItemData.decode(readValue(buffer)!);
       case 147: 
+        return WrappedTemplateData.decode(readValue(buffer)!);
+      case 148: 
         return WrappedTemplateData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
