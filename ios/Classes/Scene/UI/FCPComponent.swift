@@ -9,6 +9,10 @@ import Foundation
 
 protocol FCPComponent {
     var uuid: String { get }
-    
-    
+}
+
+extension FCPComponent {
+    func actionHandler() {
+        
+    }
 }

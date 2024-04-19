@@ -1,4 +1,5 @@
 import 'package:flutter_carplay_plus/src/platform_interface/template/template_messages.g.dart';
+import 'package:flutter_carplay_plus/ui/models/buttons/fcp_bar_button.dart';
 import 'package:flutter_carplay_plus/ui/models/fcp_component.dart';
 
 /// A superclass for all templates.
@@ -28,6 +29,23 @@ base mixin FCPRootTemplate on FCPTemplate {}
 
 /// Represents template's ability to provide navigation bar buttons.
 base mixin FCPBarButtonProviding on FCPTemplate {
-  /// Data class for providing navigation bar buttons.
-  abstract final FCPBarButtonProvidingData? barButtonProvidingData;
+  /// A button that appears in the navigation bar that navigates back.
+  abstract final FCPBarButton? backButton;
+
+  /// A set of buttons that appear in the navigation bar leading area.
+  abstract final List<FCPBarButton>? leadingNavigationBarButtons;
+
+  /// A set of buttons that appear in the navigation bar trailing area.
+  abstract final List<FCPBarButton>? trailingNavigationBarButtons;
+
+  /// A getter for [FCPBarButtonProvidingData].
+  FCPBarButtonProvidingData get barButtonProvidingData {
+    return FCPBarButtonProvidingData(
+      backButtonData: backButton?.serializedData,
+      leadingNavigationBarButtonsData:
+          leadingNavigationBarButtons?.map((e) => e.serializedData).toList(),
+      trailingNavigationBarButtonsData:
+          trailingNavigationBarButtons?.map((e) => e.serializedData).toList(),
+    );
+  }
 }

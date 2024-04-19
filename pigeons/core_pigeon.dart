@@ -10,6 +10,7 @@ import 'package:pigeon/pigeon.dart';
   ),
 )
 @FlutterApi()
+// ignore: one_member_abstracts
 abstract class CoreFlutterApi {
   void onConnectionStatusChanged(
     CarplayConnectionStatus status,

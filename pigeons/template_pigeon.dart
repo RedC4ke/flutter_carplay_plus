@@ -17,16 +17,33 @@ abstract class TemplateHostApi {
     bool animated = true,
     bool asRoot = false,
   });
+  void presentTemplate({
+    required WrappedTemplateData wrappedTemplateData,
+    bool animated = true,
+  });
+  void dismissTemplate({
+    bool animated = true,
+  });
+  void popTemplate({
+    bool animated = true,
+  });
+  void popToRootTemplate({
+    bool animated = true,
+  });
   //* Updates
   void updateTabBarChildTemplates({
     required String tabBarTemplateId,
     required List<WrappedTemplateData?> templates,
   });
+  //* Callbacks
+  void interactionCompleted(
+    String objectId,
+  );
 }
 
 @FlutterApi()
 abstract class TemplateFlutterApi {
-  void onActionCompletion(
+  void interactionStarted(
     String objectId,
   );
   void onTabSelected(

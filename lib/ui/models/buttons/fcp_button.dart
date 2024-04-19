@@ -1,4 +1,5 @@
 import 'package:flutter_carplay_plus/src/platform_interface/template/template_messages.g.dart';
+import 'package:flutter_carplay_plus/ui/models/fcp_component.dart';
 import 'package:flutter_carplay_plus/ui/models/other/fcp_clickable_component.dart';
 import 'package:flutter_carplay_plus/ui/models/other/fcp_image.dart';
 
@@ -25,4 +26,7 @@ class FCPButton extends FCPClickableComponent {
       isEnabled: isEnabled,
     );
   }
+
+  @override
+  List<FCPComponent> get childComponents => [this];
 }

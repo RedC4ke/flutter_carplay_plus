@@ -4,9 +4,9 @@ import 'package:rxdart/subjects.dart';
 /// Provides an implementation of the [CoreFlutterApi] interface.
 /// Receives messages from the platform side and sends them to the appropriate
 /// listeners.
-class CoreFlutterClient implements CoreFlutterApi {
-  /// Creates a new [CoreFlutterClient].
-  CoreFlutterClient() {
+class CoreApi implements CoreFlutterApi {
+  /// Creates a new [CoreApi].
+  CoreApi() {
     CoreFlutterApi.setup(this);
   }
 

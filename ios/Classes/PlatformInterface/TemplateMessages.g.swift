@@ -808,7 +808,12 @@ class TemplateHostApiCodec: FlutterStandardMessageCodec {
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol TemplateHostApi {
   func pushTemplate(wrappedTemplateData: WrappedTemplateData, animated: Bool, asRoot: Bool) throws
+  func presentTemplate(wrappedTemplateData: WrappedTemplateData, animated: Bool) throws
+  func dismissTemplate(animated: Bool) throws
+  func popTemplate(animated: Bool) throws
+  func popToRootTemplate(animated: Bool) throws
   func updateTabBarChildTemplates(tabBarTemplateId: String, templates: [WrappedTemplateData?]) throws
+  func interactionCompleted(objectId: String) throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -834,6 +839,67 @@ class TemplateHostApiSetup {
     } else {
       pushTemplateChannel.setMessageHandler(nil)
     }
+    let presentTemplateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.presentTemplate", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      presentTemplateChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let wrappedTemplateDataArg = args[0] as! WrappedTemplateData
+        let animatedArg = args[1] as! Bool
+        do {
+          try api.presentTemplate(wrappedTemplateData: wrappedTemplateDataArg, animated: animatedArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      presentTemplateChannel.setMessageHandler(nil)
+    }
+    let dismissTemplateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.dismissTemplate", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      dismissTemplateChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let animatedArg = args[0] as! Bool
+        do {
+          try api.dismissTemplate(animated: animatedArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      dismissTemplateChannel.setMessageHandler(nil)
+    }
+    let popTemplateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.popTemplate", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      popTemplateChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let animatedArg = args[0] as! Bool
+        do {
+          try api.popTemplate(animated: animatedArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      popTemplateChannel.setMessageHandler(nil)
+    }
+    let popToRootTemplateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.popToRootTemplate", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      popToRootTemplateChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let animatedArg = args[0] as! Bool
+        do {
+          try api.popToRootTemplate(animated: animatedArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      popToRootTemplateChannel.setMessageHandler(nil)
+    }
     let updateTabBarChildTemplatesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.updateTabBarChildTemplates", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       updateTabBarChildTemplatesChannel.setMessageHandler { message, reply in
@@ -850,11 +916,26 @@ class TemplateHostApiSetup {
     } else {
       updateTabBarChildTemplatesChannel.setMessageHandler(nil)
     }
+    let interactionCompletedChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.interactionCompleted", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      interactionCompletedChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let objectIdArg = args[0] as! String
+        do {
+          try api.interactionCompleted(objectId: objectIdArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      interactionCompletedChannel.setMessageHandler(nil)
+    }
   }
 }
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol TemplateFlutterApiProtocol {
-  func onActionCompletion(objectId objectIdArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
+  func interactionStarted(objectId objectIdArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
   func onTabSelected(tabBarTemplateId tabBarTemplateIdArg: String, selectedTemplateId selectedTemplateIdArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 class TemplateFlutterApi: TemplateFlutterApiProtocol {
@@ -862,8 +943,8 @@ class TemplateFlutterApi: TemplateFlutterApiProtocol {
   init(binaryMessenger: FlutterBinaryMessenger) {
     self.binaryMessenger = binaryMessenger
   }
-  func onActionCompletion(objectId objectIdArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.onActionCompletion"
+  func interactionStarted(objectId objectIdArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.interactionStarted"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([objectIdArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {

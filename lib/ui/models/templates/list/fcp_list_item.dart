@@ -4,7 +4,7 @@ import 'package:flutter_carplay_plus/ui/models/other/fcp_image.dart';
 import 'package:flutter_carplay_plus/ui/models/templates/list/fcp_list_section.dart';
 
 /// A selectable tile in a [FCPListSection].
-class FCPListItem extends FCPComponent {
+class FCPListItem extends FCPInteractiveComponent {
   /// Creates a new instance of [FCPListItem].
   FCPListItem({
     required this.text,
@@ -18,12 +18,17 @@ class FCPListItem extends FCPComponent {
     this.playingIndicatorLocation =
         FCPListItemPlayingIndicatorLocation.trailing,
     this.isExplicitContent = false,
+    this.onPressed,
   });
 
   /// List item name.
   final String text;
 
   final bool isEnabled;
+
+  @override
+  final void Function(FCPInteractiveComponent self, Function complete)?
+      onPressed;
 
   /// An optional detail text for the list item.
   final String? detailText;
@@ -48,9 +53,11 @@ class FCPListItem extends FCPComponent {
   WrappedListItemData get serializedData {
     return WrappedListItemData(
       type: FCPListTemplateItemType.listItem,
-      componentData: componentData,
-      text: text,
-      isEnabled: isEnabled,
+      itemData: FCPListTemplateItemData(
+        componentData: componentData,
+        text: text,
+        isEnabled: isEnabled,
+      ),
       listItemData: FCPListItemData(
         accessoryType: accessoryType,
         detailText: detailText,
@@ -62,5 +69,10 @@ class FCPListItem extends FCPComponent {
         accessoryImage: accessoryImage?.toImageData(),
       ),
     );
+  }
+
+  @override
+  List<FCPComponent> get childComponents {
+    return [];
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_carplay_plus/src/platform_interface/template/template_messages.g.dart';
+import 'package:flutter_carplay_plus/ui/models/fcp_component.dart';
 import 'package:flutter_carplay_plus/ui/models/templates/fcp_list_template.dart';
 import 'package:flutter_carplay_plus/ui/models/templates/fcp_template.dart';
 
@@ -28,4 +29,9 @@ final class FCPTabBarTemplate extends FCPFullscreenTemplate
 
   /// A list of templates for the tab bar to display.
   final List<FCPTemplate> templates;
+
+  @override
+  List<FCPComponent> get childComponents {
+    return templates.expand((e) => e.componentHierarchy).toList();
+  }
 }

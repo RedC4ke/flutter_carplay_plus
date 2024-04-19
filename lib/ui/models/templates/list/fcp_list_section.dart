@@ -23,4 +23,9 @@ class FCPListSection extends FCPComponent {
       items: items.map((e) => e.serializedData).toList(),
     );
   }
+
+  @override
+  List<FCPComponent> get childComponents {
+    return items.expand((e) => e.componentHierarchy).toList();
+  }
 }

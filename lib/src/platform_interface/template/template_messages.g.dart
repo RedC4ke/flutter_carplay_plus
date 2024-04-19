@@ -888,6 +888,94 @@ class TemplateHostApi {
     }
   }
 
+  Future<void> presentTemplate({required WrappedTemplateData wrappedTemplateData, bool animated = true}) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.presentTemplate';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[wrappedTemplateData, animated]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> dismissTemplate({bool animated = true}) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.dismissTemplate';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[animated]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> popTemplate({bool animated = true}) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.popTemplate';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[animated]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> popToRootTemplate({bool animated = true}) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.popToRootTemplate';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[animated]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   Future<void> updateTabBarChildTemplates({required String tabBarTemplateId, required List<WrappedTemplateData?> templates}) async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.updateTabBarChildTemplates';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
@@ -909,32 +997,54 @@ class TemplateHostApi {
       return;
     }
   }
+
+  Future<void> interactionCompleted(String objectId) async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.flutter_carplay_plus.TemplateHostApi.interactionCompleted';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[objectId]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 abstract class TemplateFlutterApi {
   static const MessageCodec<Object?> pigeonChannelCodec = StandardMessageCodec();
 
-  void onActionCompletion(String objectId);
+  void interactionStarted(String objectId);
 
   void onTabSelected(String tabBarTemplateId, String selectedTemplateId);
 
   static void setup(TemplateFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.onActionCompletion', pigeonChannelCodec,
+          'dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.interactionStarted', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.onActionCompletion was null.');
+          'Argument for dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.interactionStarted was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_objectId = (args[0] as String?);
           assert(arg_objectId != null,
-              'Argument for dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.onActionCompletion was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.flutter_carplay_plus.TemplateFlutterApi.interactionStarted was null, expected non-null String.');
           try {
-            api.onActionCompletion(arg_objectId!);
+            api.interactionStarted(arg_objectId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

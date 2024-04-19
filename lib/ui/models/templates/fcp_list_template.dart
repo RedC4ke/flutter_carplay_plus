@@ -1,4 +1,6 @@
 import 'package:flutter_carplay_plus/src/platform_interface/template/template_messages.g.dart';
+import 'package:flutter_carplay_plus/ui/models/buttons/fcp_bar_button.dart';
+import 'package:flutter_carplay_plus/ui/models/fcp_component.dart';
 import 'package:flutter_carplay_plus/ui/models/templates/fcp_template.dart';
 import 'package:flutter_carplay_plus/ui/models/templates/list/fcp_list_section.dart';
 
@@ -14,8 +16,10 @@ final class FCPListTemplate extends FCPFullscreenTemplate
     required this.sections,
     this.emptyViewTtleVariants = const [],
     this.emptyViewSubtitleVariants = const [],
-    this.barButtonProvidingData,
     this.title,
+    this.backButton,
+    this.leadingNavigationBarButtons,
+    this.trailingNavigationBarButtons,
     super.tabData,
   });
 
@@ -33,7 +37,13 @@ final class FCPListTemplate extends FCPFullscreenTemplate
   final List<String> emptyViewSubtitleVariants;
 
   @override
-  final FCPBarButtonProvidingData? barButtonProvidingData;
+  final FCPBarButton? backButton;
+
+  @override
+  final List<FCPBarButton>? leadingNavigationBarButtons;
+
+  @override
+  final List<FCPBarButton>? trailingNavigationBarButtons;
 
   @override
   WrappedTemplateData get serializedData {
@@ -41,11 +51,22 @@ final class FCPListTemplate extends FCPFullscreenTemplate
       type: FCPTemplateType.list,
       data: FCPTemplateData(
         componentData: componentData,
+        tabData: tabData,
       ),
       listTemplateData: FCPListTemplateData(
         sections: sections.map((e) => e.serializedData).toList(),
         barButtonProvidingData: barButtonProvidingData,
       ),
     );
+  }
+
+  @override
+  List<FCPComponent> get childComponents {
+    return [
+      ...sections.expand((e) => e.componentHierarchy),
+      backButton,
+      ...?leadingNavigationBarButtons,
+      ...?trailingNavigationBarButtons,
+    ].nonNulls.toList();
   }
 }
