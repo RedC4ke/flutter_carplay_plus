@@ -2,6 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_carplay_plus/flutter_carplay_plus.dart';
+import 'package:flutter_carplay_plus/ui/fcp_router.dart';
+import 'package:flutter_carplay_plus/ui/models/buttons/fcp_bar_button.dart';
+import 'package:flutter_carplay_plus/ui/models/templates/fcp_list_template.dart';
+import 'package:flutter_carplay_plus/ui/models/templates/fcp_tab_bar_template.dart';
+import 'package:flutter_carplay_plus/ui/models/templates/list/fcp_list_item.dart';
+import 'package:flutter_carplay_plus/ui/models/templates/list/fcp_list_section.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _coreFlutterClient = FlutterCarplayPlus.coreFlutterClient;
+  final _coreApi = FlutterCarplayPlus.coreApi;
   StreamSubscription<CarplayConnectionStatus>? _connectionStatusSub;
   String _carplayConnectionStatus = CarplayConnectionStatus.unknown.name;
 
@@ -23,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
-    _connectionStatusSub = _coreFlutterClient.connectionStatusStream.listen(
+    _connectionStatusSub = _coreApi.connectionStatusStream.listen(
       _onCarplayConnectionStatusChanged,
     );
   }
@@ -32,6 +38,28 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _carplayConnectionStatus = status.name;
     });
+
+    if (status == CarplayConnectionStatus.connected) {
+      FCPRouter.setRootTemplate(
+        FCPTabBarTemplate(
+          templates: [
+            FCPListTemplate(
+              title: 'List template',
+              backButton: FCPBarButton(
+                title: ':D',
+              ),
+              sections: [
+                FCPListSection(
+                  items: [
+                    FCPListItem(text: 'List item!!!'),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override

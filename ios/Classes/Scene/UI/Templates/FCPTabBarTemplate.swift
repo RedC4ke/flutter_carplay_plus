@@ -8,27 +8,30 @@
 import CarPlay
 import Foundation
 
-class FCPTabBarTemplate: CPTabBarTemplate, FCPFullscreenTemplate {
+class FCPTabBarTemplate: FCPFullscreenTemplate {
     let uuid: String
     let templateData: FCPTemplateData
+    let template: CPTemplate
+
+    let templates: [FCPTemplate]
 
     init(with templateData: FCPTemplateData, tabBarTemplateData: FCPTabBarTemplateData) throws {
-        self.uuid = templateData.componentData.componentId
-        self.templateData = templateData
-
-        let templates: [CPTemplate] = try tabBarTemplateData.templates.compactMap {
+        let templates: [FCPTemplate] = try tabBarTemplateData.templates.compactMap {
             try $0?.unwrap()
         }
+        let cpTemplates = templates.map { $0.template }
+        template = CPTabBarTemplate(templates: cpTemplates)
 
-        super.init(templates: templates)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        uuid = templateData.componentData.componentId
+        self.templateData = templateData
+        self.templates = templates
     }
 
     func wrap() -> WrappedTemplateData {
         return WrappedTemplateData(type: .tabBar, data: templateData)
+    }
+
+    func getChildComponents() -> [any FCPComponent] {
+        return templates.fcpComponents()
     }
 }

@@ -8,26 +8,40 @@
 import CarPlay
 import Foundation
 
-class FCPListItem: CPListItem, FCPListTemplateItem {
+class FCPListItem: FCPListTemplateItem {
     let uuid: String
+    let item: CPListItem
+    var completer: (() -> Void)?
 
     init(itemData: FCPListTemplateItemData, listItemData: FCPListItemData) {
         self.uuid = itemData.componentData.componentId
-        if #available(iOS 15.0, *) {
-            self.isEnabled = itemData.isEnabled
-        }
 
-        self.isExplicitContent = listItemData.isExplicitContent
-        self.isPlaying = listItemData.isPlaying
-        self.playingIndicatorLocation = listItemData.playingIndicatorLocation.cp
-        self.playbackProgress = listItemData.playbackProgress
-
-        super.init(
+        self.item = CPListItem(
             text: itemData.text,
             detailText: listItemData.detailText,
             image: UIImage.fromFCPImageData(listItemData.image),
             accessoryImage: UIImage.fromFCPImageData(listItemData.accessoryImage),
             accessoryType: listItemData.accessoryType.cp
         )
+
+        if #available(iOS 15.0, *) {
+            item.isEnabled = itemData.isEnabled
+        }
+
+        item.isExplicitContent = listItemData.isExplicitContent
+        item.isPlaying = listItemData.isPlaying
+        item.playingIndicatorLocation = listItemData.playingIndicatorLocation.cp
+        item.playbackProgress = listItemData.playbackProgress
+
+        item.handler = { _, complete in
+            DispatchQueue.main.async {
+                self.completer = complete
+                self.startHandler()
+            }
+        }
+    }
+
+    func getChildComponents() -> [any FCPComponent] {
+        return []
     }
 }

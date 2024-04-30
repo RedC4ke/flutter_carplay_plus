@@ -159,6 +159,7 @@ class FCPListTemplateData {
 
 class FCPListSectionData {
   FCPListSectionData({
+    required this.componentData,
     required this.items,
     this.header,
     this.sectionIndexTitle,
@@ -167,6 +168,7 @@ class FCPListSectionData {
     this.headerSubtitle,
   });
 
+  final FCPComponentData componentData;
   final String? header;
   final String? sectionIndexTitle;
   final List<WrappedListItemData?> items;

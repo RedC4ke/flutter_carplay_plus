@@ -35,7 +35,7 @@ abstract class FCPRouter {
   }
 
   /// Clears the current template stack and pushes the given template as root.
-  static Future<void> pushRootTemplate(
+  static Future<void> setRootTemplate(
     FCPRootTemplate template, {
     bool animated = true,
   }) async {

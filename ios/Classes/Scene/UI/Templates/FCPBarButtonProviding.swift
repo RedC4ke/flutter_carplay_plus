@@ -8,8 +8,11 @@
 import CarPlay
 import Foundation
 
-protocol FCPBarButtonProviding: CPBarButtonProviding {
+protocol FCPBarButtonProviding: FCPTemplate {
     var barButonProvidingData: FCPBarButtonProvidingData? { get }
+    var backButton: FCPBarButton? { get }
+    var leadingNavigationBarButtons: [FCPBarButton] { ge }
+    var trailingNavigationBarButtons: [FCPBarButton] { get }
 }
 
 extension FCPBarButtonProviding {
@@ -23,8 +26,11 @@ extension FCPBarButtonProviding {
     }
 
     private func setBarButtonProvidingData(to data: FCPBarButtonProvidingData) {
+        // TODO: implement this
         if let backButtonData = data.backButtonData {
             // backButton = backButtonData.deserialize()
         }
+        leadingNavigationBarButtons = []
+        trailingNavigationBarButtons = []
     }
 }

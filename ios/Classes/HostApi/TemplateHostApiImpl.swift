@@ -9,7 +9,10 @@ import Flutter
 import Foundation
 
 class TemplateHostApiImpl: NSObject, TemplateHostApi {
-    var flutterApi: TemplateFlutterApi? {
+    private var templateStack: [FCPTemplate] = []
+    private var modalTemplate: FCPModalTemplate?
+
+    private var flutterApi: TemplateFlutterApi? {
         return FlutterCarplayPlusPlugin.instance?.templateFlutterApi
     }
 
@@ -29,5 +32,52 @@ class TemplateHostApiImpl: NSObject, TemplateHostApi {
         }
     }
 
+    func presentTemplate(wrappedTemplateData: WrappedTemplateData, animated: Bool) throws {
+        let template = try wrappedTemplateData.unwrap()
+        guard let modalTemplate = template as? FCPModalTemplate else {
+            throw FlutterError(type: .malformed_template_model)
+        }
+
+        self.modalTemplate = modalTemplate
+        FCPSceneDelegate.present(template: modalTemplate, animated: animated)
+    }
+
+    func popTemplate(animated: Bool) throws {
+        FCPSceneDelegate.popTemplate(animated: animated)
+
+        if !templateStack.isEmpty { templateStack.removeLast() }
+    }
+
+    func dismissTemplate(animated: Bool) throws {
+        FCPSceneDelegate.dismissTemplate(animated: animated)
+
+        modalTemplate = nil
+    }
+
+    func popToRootTemplate(animated: Bool) throws {
+        FCPSceneDelegate.popToRootTemplate(animated: animated)
+
+        if !templateStack.isEmpty { templateStack = [templateStack.first!] }
+    }
+
+    func interactionCompleted(objectId: String) throws {
+        let component = findComponent(with: objectId)
+        if var interactiveComponent = component as? FCPInteractiveComponent {
+            interactiveComponent.completeHandler()
+        }
+    }
+
     func updateTabBarChildTemplates(tabBarTemplateId: String, templates: [WrappedTemplateData?]) throws {}
+
+    private func findComponent(with uuid: String) -> FCPComponent? {
+        for template in templateStack {
+            if template.uuid == uuid { return template }
+
+            for child in template.getComponentHierarchy() {
+                if child.uuid == uuid { return child }
+            }
+        }
+
+        return nil
+    }
 }

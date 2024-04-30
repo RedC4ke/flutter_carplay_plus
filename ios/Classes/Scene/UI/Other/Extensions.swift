@@ -101,3 +101,15 @@ extension FCPListItemPlayingIndicatorLocation {
         }
     }
 }
+
+extension Array {
+    func fcpComponents() -> [FCPComponent] {
+        return (compactMap { element in
+            guard let fcpComponent = element as? FCPComponent else {
+                return nil
+            }
+
+            return fcpComponent.getComponentHierarchy()
+        }).reduce([], +)
+    }
+}

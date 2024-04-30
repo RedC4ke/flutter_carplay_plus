@@ -9,10 +9,31 @@ import Foundation
 
 protocol FCPComponent {
     var uuid: String { get }
+
+    func getChildComponents() -> [FCPComponent]
 }
 
 extension FCPComponent {
-    func actionHandler() {
-        
+    func getComponentHierarchy() -> [FCPComponent] {
+        return [self] + getChildComponents()
+    }
+}
+
+protocol FCPInteractiveComponent: FCPComponent {
+    var completer: (() -> Void)? { get set }
+}
+
+extension FCPInteractiveComponent {
+    func startHandler() {
+        FlutterCarplayPlusPlugin.instance?.templateFlutterApi.interactionStarted(objectId: uuid, completion: { _ in })
+    }
+
+    static func startHandler(_ uuid: String) {
+        FlutterCarplayPlusPlugin.instance?.templateFlutterApi.interactionStarted(objectId: uuid, completion: { _ in })
+    }
+
+    mutating func completeHandler() {
+        completer?()
+        completer = nil
     }
 }

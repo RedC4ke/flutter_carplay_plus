@@ -9,8 +9,9 @@ import CarPlay
 import Flutter
 import Foundation
 
-protocol FCPTemplate: CPTemplate, FCPComponent {
+protocol FCPTemplate: FCPComponent {
     var templateData: FCPTemplateData { get }
+    var template: CPTemplate { get }
     func wrap() -> WrappedTemplateData
 }
 
@@ -29,8 +30,8 @@ extension FCPTemplate {
     }
 
     private func setTabData(to fcpTabData: FCPTabData) {
-        self.tabTitle = fcpTabData.tabTitle
-        self.showsTabBadge = fcpTabData.showsTabBadge
+        self.template.tabTitle = fcpTabData.tabTitle
+        self.template.showsTabBadge = fcpTabData.showsTabBadge
         // TODO: fill image data
     }
 }

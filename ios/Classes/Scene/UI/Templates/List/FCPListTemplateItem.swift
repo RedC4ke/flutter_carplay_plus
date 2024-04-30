@@ -9,7 +9,9 @@ import CarPlay
 import Flutter
 import Foundation
 
-protocol FCPListTemplateItem: CPListTemplateItem, FCPComponent {}
+protocol FCPListTemplateItem: FCPInteractiveComponent {
+    var item: CPListTemplateItem { get }
+}
 
 extension WrappedListItemData {
     func unwrap() throws -> FCPListTemplateItem {

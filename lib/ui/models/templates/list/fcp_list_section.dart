@@ -19,6 +19,7 @@ class FCPListSection extends FCPComponent {
   @override
   FCPListSectionData get serializedData {
     return FCPListSectionData(
+      componentData: componentData,
       header: header,
       items: items.map((e) => e.serializedData).toList(),
     );

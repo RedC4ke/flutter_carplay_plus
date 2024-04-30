@@ -289,6 +289,7 @@ class FCPListTemplateData {
 
 class FCPListSectionData {
   FCPListSectionData({
+    required this.componentData,
     this.header,
     this.sectionIndexTitle,
     required this.items,
@@ -296,6 +297,8 @@ class FCPListSectionData {
     this.headerImage,
     this.headerSubtitle,
   });
+
+  FCPComponentData componentData;
 
   String? header;
 
@@ -311,6 +314,7 @@ class FCPListSectionData {
 
   Object encode() {
     return <Object?>[
+      componentData.encode(),
       header,
       sectionIndexTitle,
       items,
@@ -323,16 +327,17 @@ class FCPListSectionData {
   static FCPListSectionData decode(Object result) {
     result as List<Object?>;
     return FCPListSectionData(
-      header: result[0] as String?,
-      sectionIndexTitle: result[1] as String?,
-      items: (result[2] as List<Object?>?)!.cast<WrappedListItemData?>(),
-      headerButton: result[3] != null
-          ? FCPButtonData.decode(result[3]! as List<Object?>)
+      componentData: FCPComponentData.decode(result[0]! as List<Object?>),
+      header: result[1] as String?,
+      sectionIndexTitle: result[2] as String?,
+      items: (result[3] as List<Object?>?)!.cast<WrappedListItemData?>(),
+      headerButton: result[4] != null
+          ? FCPButtonData.decode(result[4]! as List<Object?>)
           : null,
-      headerImage: result[4] != null
-          ? FCPImageData.decode(result[4]! as List<Object?>)
+      headerImage: result[5] != null
+          ? FCPImageData.decode(result[5]! as List<Object?>)
           : null,
-      headerSubtitle: result[5] as String?,
+      headerSubtitle: result[6] as String?,
     );
   }
 }
